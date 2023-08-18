@@ -1,6 +1,6 @@
 [project]
 name = "kylink"
-version = "0.0.1"
+version = "0.0.2"
 authors = [
   { name="KyLink", email="kylink@protonmail.com" },
 ]
@@ -13,10 +13,11 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 
+
 [project.urls]
 "Homepage" = "https://github.com/njublockchain/kylink-py"
 "Bug Tracker" = "https://github.com/njublockchain/kylink-py/issues"
 
 [build-system]
-requires = ["hatchling"]
+requires = ["hatchling", "gql[requests]"]
 build-backend = "hatchling.build"
