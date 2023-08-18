@@ -1,16 +1,14 @@
 [project]
 name = "kylink"
 version = "0.0.2"
-authors = [
-  { name="KyLink", email="kylink@protonmail.com" },
-]
+authors = [{ name = "KyLink", email = "kylink@protonmail.com" }]
 description = "Python SDK for Kylink Platform"
 readme = "README.md"
 requires-python = ">=3.7"
 classifiers = [
-    "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: MIT License",
-    "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
 ]
 
 
