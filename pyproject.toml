@@ -10,12 +10,14 @@ classifiers = [
   "License :: OSI Approved :: MIT License",
   "Operating System :: OS Independent",
 ]
-
+dependencies = [
+  "gql[requests]"
+]
 
 [project.urls]
 "Homepage" = "https://github.com/njublockchain/kylink-py"
 "Bug Tracker" = "https://github.com/njublockchain/kylink-py/issues"
 
 [build-system]
-requires = ["hatchling", "gql[requests]"]
+requires = ["hatchling"]
 build-backend = "hatchling.build"
