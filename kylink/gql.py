@@ -2,18 +2,18 @@ from gql import gql, Client
 from gql.transport.requests import RequestsHTTPTransport
 
 
-
 class Kylink:
     def __init__(self) -> None:
         self._transport = RequestsHTTPTransport(url="https://kpi.kylink.xyz")
-        self._client = Client(transport=self._transport, fetch_schema_from_transport=True)
+        self._client = Client(
+            transport=self._transport, fetch_schema_from_transport=True
+        )
 
-
-    def blocks(self, filter={}, limit=10, offset=0):
+    def blocks(self, filter={}, sorter={}, limit=10, offset=0):
         query = gql(
             """
-        query getBlocks($filter: BlockFilter, $limit: Int, $offset: Int) {
-            blocks(filter: $filter, limit: $limit, offset: $offset) {
+        query Blocks($filter: BlockFilter, $sorter: BlockSorter, $pagination: Pagination) {
+            blocks(filter: $filter, sorter: $sorter, pagination: $pagination) {
                 hash
                 number
                 parentHash
@@ -40,14 +40,18 @@ class Kylink:
         """
         )
 
-        params = {"filter": filter, "limit": limit, "offset": offset}
+        params = {
+            "filter": filter,
+            "sorter": sorter,
+            "pagination": {"offset": offset, "limit": limit},
+        }
         return self._client.execute(query, variable_values=params)
 
-    def transactions(self, filter={}, limit=10, offset=0):
+    def transactions(self, filter={}, sorter={}, limit=10, offset=0):
         query = gql(
             """
-        query getTransactions($filter: EventFilter, $limit: Int, $offset: Int) {
-            events(filter: $filter, limit: $limit, offset: $offset) {
+        query getTransactions($filter: EventFilter, $sorter: EventSorter, $pagination: Pagination) {
+            events(filter: $filter, sorter: $sorter, pagination: $pagination) {
                 address
                 blockHash
                 blockNumber
@@ -63,14 +67,18 @@ class Kylink:
         """
         )
 
-        params = {"filter": filter, "limit": limit, "offset": offset}
+        params = {
+            "filter": filter,
+            "sorter": sorter,
+            "pagination": {"offset": offset, "limit": limit},
+        }
         return self._client.execute(query, variable_values=params)
 
-    def events(self, filter={}, limit=10, offset=0):
+    def events(self, filter={}, sorter={}, limit=10, offset=0):
         query = gql(
             """
-        query getEvents($filter: EventFilter, $limit: Int, $offset: Int) {
-            events(filter: $filter, limit: $limit, offset: $offset) {
+        query getEvents($filter: EventFilter, $sorter: EventSorter, $pagination: Pagination) {
+            events(filter: $filter, sorter: $sorter, pagination: $pagination) {
                 address
                 blockHash
                 blockNumber
@@ -86,14 +94,18 @@ class Kylink:
         """
         )
 
-        params = {"filter": filter, "limit": limit, "offset": offset}
+        params = {
+            "filter": filter,
+            "sorter": sorter,
+            "pagination": {"offset": offset, "limit": limit},
+        }
         return self._client.execute(query, variable_values=params)
 
-    def traces(self, filter={}, limit=10, offset=0):
+    def traces(self, filter={}, sorter={}, limit=10, offset=0):
         query = gql(
             """
         query getTraces($filter: TraceFilter, $limit: Int, $offset: Int) {
-            traces(filter: $filter, limit: $limit, offset: $offset) {
+            traces(filter: $filter, sorter: $sorter, pagination: $pagination) {
                 blockPos
                 blockNumber
                 blockTimestamp
@@ -131,14 +143,18 @@ class Kylink:
         """
         )
 
-        params = {"filter": filter, "limit": limit, "offset": offset}
+        params = {
+            "filter": filter,
+            "sorter": sorter,
+            "pagination": {"offset": offset, "limit": limit},
+        }
         return self._client.execute(query, variable_values=params)
 
-    def withdraws(self, filter={}, limit=10, offset=0):
+    def withdraws(self, filter={}, sorter={}, limit=10, offset=0):
         query = gql(
             """
-        query Withdraws($filter: WithdrawFilter, $limit: Int, $offset: Int) {
-            withdraws(filter: $filter, limit: $limit, offset: $offset) {
+        query Withdraws($filter: WithdrawFilter, $sorter: WithdrawSorter, $pagination: Pagination) {
+            withdraws(filter: $filter, sorter: $sorter, pagination: $pagination) {
                 blockHash
                 blockNumber
                 blockTimestamp
@@ -151,7 +167,11 @@ class Kylink:
         """
         )
 
-        params = {"filter": filter, "limit": limit, "offset": offset}
+        params = {
+            "filter": filter,
+            "sorter": sorter,
+            "pagination": {"offset": offset, "limit": limit},
+        }
         return self._client.execute(query, variable_values=params)
 
     def account(self, address=""):
