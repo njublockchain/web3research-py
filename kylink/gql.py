@@ -2,12 +2,13 @@ from gql import gql, Client
 from gql.transport.requests import RequestsHTTPTransport
 
 
-class Kylink:
-    def __init__(self) -> None:
+class GraphQLProvider:
+    def __init__(self, api) -> None:
         self._transport = RequestsHTTPTransport(url="https://kpi.kylink.xyz")
         self._client = Client(
             transport=self._transport, fetch_schema_from_transport=True
         )
+        self._api = api
 
     def blocks(self, filter={}, sorter={}, limit=10, offset=0):
         query = gql(
@@ -45,7 +46,8 @@ class Kylink:
             "sorter": sorter,
             "pagination": {"offset": offset, "limit": limit},
         }
-        return self._client.execute(query, variable_values=params)
+
+        return self._client.execute(query, variable_values=params)["blocks"]
 
     def transactions(self, filter={}, sorter={}, limit=10, offset=0):
         query = gql(
@@ -72,7 +74,8 @@ class Kylink:
             "sorter": sorter,
             "pagination": {"offset": offset, "limit": limit},
         }
-        return self._client.execute(query, variable_values=params)
+
+        return self._client.execute(query, variable_values=params)["transactions"]
 
     def events(self, filter={}, sorter={}, limit=10, offset=0):
         query = gql(
@@ -99,7 +102,8 @@ class Kylink:
             "sorter": sorter,
             "pagination": {"offset": offset, "limit": limit},
         }
-        return self._client.execute(query, variable_values=params)
+
+        return self._client.execute(query, variable_values=params)["evemts"]
 
     def traces(self, filter={}, sorter={}, limit=10, offset=0):
         query = gql(
@@ -148,6 +152,7 @@ class Kylink:
             "sorter": sorter,
             "pagination": {"offset": offset, "limit": limit},
         }
+
         return self._client.execute(query, variable_values=params)
 
     def withdraws(self, filter={}, sorter={}, limit=10, offset=0):
@@ -172,7 +177,8 @@ class Kylink:
             "sorter": sorter,
             "pagination": {"offset": offset, "limit": limit},
         }
-        return self._client.execute(query, variable_values=params)
+
+        return self._client.execute(query, variable_values=params)["withdraws"]
 
     def account(self, address=""):
         query = gql(
@@ -189,4 +195,5 @@ class Kylink:
         """
         )
         params = {"address": address}
-        return self._client.execute(query, variable_values=params)
+        
+        return self._client.execute(query, variable_values=params)["account"]
