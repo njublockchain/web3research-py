@@ -1,1 +1,1 @@
-from .gql import Kylink
+from .kylink import Kylink
