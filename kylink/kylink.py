@@ -4,6 +4,7 @@ from kylink.gql import GraphQLProvider
 from kylink.resolve import ResolveProvider
 from kylink.token import TokenProvider
 from kylink.wallet import WalletProvider
+from kylink.utils import Utils
 
 
 class Kylink:
@@ -14,3 +15,4 @@ class Kylink:
         self.resolve = ResolveProvider(self.raw)
         self.wallet = WalletProvider(self.raw)
         self.token = TokenProvider(self.raw)
+        self.utils = Utils()
