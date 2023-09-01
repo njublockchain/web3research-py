@@ -11,8 +11,7 @@ classifiers = [
   "Operating System :: OS Independent",
 ]
 dependencies = [
-  "gql[requests]",
-  "matplotlib"
+  "gql[requests]"
 ]
 
 [project.urls]

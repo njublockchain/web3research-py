@@ -10,31 +10,6 @@ from kylink.resolve import ResolveProvider
 from kylink.token import TokenProvider
 from kylink.wallet import WalletProvider
 
-import matplotlib.pyplot as plt
-
-
-# Patch
-def ensure_matplotlib_patch():
-    # _old_show = plt.show
-
-    def show():
-        buf = BytesIO()
-        plt.savefig(buf, format="png")
-        buf.seek(0)
-        # Encode to a base64 str
-        img = "data:image/png;base64," + base64.b64encode(buf.read()).decode("utf-8")
-        # Write to stdout
-        print(img)
-        plt.clf()
-
-    plt.show = show
-
-
-os.environ["MPLBACKEND"] = "AGG"
-
-ensure_matplotlib_patch()
-
-
 class Kylink:
     def __init__(self, api=None) -> None:
         self.raw = GraphQLProvider(api)
@@ -45,9 +20,10 @@ class Kylink:
         self.token = TokenProvider(self.raw)
 
     def install(self):
-        ensure_matplotlib_patch()
+        # Set this _before_ importing matplotlib
+        os.environ['MPLBACKEND'] = 'AGG'
 
-    def image(self, plot):
+    def image(self, plt):
         buf = BytesIO()
         plt.savefig(buf, format="png")
         buf.seek(0)
