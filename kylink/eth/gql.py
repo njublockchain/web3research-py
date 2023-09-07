@@ -4,7 +4,7 @@ from gql.transport.requests import RequestsHTTPTransport
 
 class GraphQLProvider:
     def __init__(self, api) -> None:
-        self._transport = RequestsHTTPTransport(url="https://kpi.kylink.xyz")
+        self._transport = RequestsHTTPTransport(url="https://eth.api.kylink.xyz")
         self._client = Client(
             transport=self._transport, fetch_schema_from_transport=True
         )
