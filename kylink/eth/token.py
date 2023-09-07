@@ -1,6 +1,6 @@
-from kylink.gql import GraphQLProvider
+from .gql import GraphQLProvider
 
 
-class WalletProvider:
+class TokenProvider:
     def __init__(self, raw_provider: GraphQLProvider):
         pass

@@ -1,4 +1,4 @@
-from kylink.gql import GraphQLProvider
+from .gql import GraphQLProvider
 
 
 class MarketProvider:

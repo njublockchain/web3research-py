@@ -1,27 +1,17 @@
-import os
-import json
 import base64
 from io import BytesIO
+import json
+import os
+from kylink.eth import EthereumProvider
 
-from kylink.defi import DeFiProvider
-from kylink.market import MarketProvider
-from kylink.gql import GraphQLProvider
-from kylink.resolve import ResolveProvider
-from kylink.token import TokenProvider
-from kylink.wallet import WalletProvider
 
 class Kylink:
     def __init__(self, api=None) -> None:
-        self.raw = GraphQLProvider(api)
-        self.market = MarketProvider(self.raw)
-        self.defi = DeFiProvider(self.raw)
-        self.resolve = ResolveProvider(self.raw)
-        self.wallet = WalletProvider(self.raw)
-        self.token = TokenProvider(self.raw)
+        self.eth = EthereumProvider(api)
 
     def install(self):
         # Set this _before_ importing matplotlib
-        os.environ['MPLBACKEND'] = 'AGG'
+        os.environ["MPLBACKEND"] = "AGG"
 
     def image(self, plt):
         buf = BytesIO()
