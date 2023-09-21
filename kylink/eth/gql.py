@@ -1,5 +1,19 @@
+from dataclasses import asdict
 from gql import gql, Client
 from gql.transport.requests import RequestsHTTPTransport
+
+from .typehints import (
+    BlockFilter,
+    BlockSorter,
+    EventFilter,
+    EventSorter,
+    TraceFilter,
+    TraceSorter,
+    TransactionFilter,
+    TransactionSorter,
+    WithdrawFilter,
+    WithdrawSorter,
+)
 
 
 class GraphQLProvider:
@@ -10,7 +24,7 @@ class GraphQLProvider:
         )
         self._api = api
 
-    def blocks(self, filter={}, sorter={}, limit=10, offset=0):
+    def blocks(self, filter=BlockFilter, sorter=BlockSorter, limit=10, offset=0):
         query = gql(
             """
         query Blocks($filter: BlockFilter, $sorter: BlockSorter, $pagination: Pagination) {
@@ -49,35 +63,57 @@ class GraphQLProvider:
 
         return self._client.execute(query, variable_values=params)["blocks"]
 
-    def transactions(self, filter={}, sorter={}, limit=10, offset=0):
+    def transactions(
+        self, filter=TransactionFilter, sorter=TransactionSorter, limit=10, offset=0
+    ):
+        setattr(filter, "from_", "from")
+        setattr(sorter, "from_", "from")
+
         query = gql(
             """
         query getTransactions($filter: EventFilter, $sorter: EventSorter, $pagination: Pagination) {
-            events(filter: $filter, sorter: $sorter, pagination: $pagination) {
-                address
+            transactions(filter: $filter, sorter: $sorter, pagination: $pagination) {
+                hash
                 blockHash
                 blockNumber
                 blockTimestamp
-                transactionHash
                 transactionIndex
-                logIndex
-                removed
-                topics
-                data
+                chainId
+                type
+                from
+                to
+                value
+                nonce
+                input
+                gas
+                gasPrice
+                maxFeePerGas
+                maxPriorityFeePerGas
+                r
+                s
+                v
+                accessList
+                contractAddress
+                cumulativeGasUsed
+                effectiveGasPrice
+                gasUsed
+                logsBloom
+                root
+                status
             }
         }
         """
         )
 
         params = {
-            "filter": filter,
-            "sorter": sorter,
+            "filter": asdict(filter),
+            "sorter": asdict(sorter),
             "pagination": {"offset": offset, "limit": limit},
         }
 
         return self._client.execute(query, variable_values=params)["transactions"]
 
-    def events(self, filter={}, sorter={}, limit=10, offset=0):
+    def events(self, filter=EventFilter, sorter=EventSorter, limit=10, offset=0):
         query = gql(
             """
         query getEvents($filter: EventFilter, $sorter: EventSorter, $pagination: Pagination) {
@@ -105,7 +141,7 @@ class GraphQLProvider:
 
         return self._client.execute(query, variable_values=params)["evemts"]
 
-    def traces(self, filter={}, sorter={}, limit=10, offset=0):
+    def traces(self, filter=TraceFilter, sorter=TraceSorter, limit=10, offset=0):
         query = gql(
             """
         query getTraces($filter: TraceFilter, $limit: Int, $offset: Int) {
@@ -148,14 +184,14 @@ class GraphQLProvider:
         )
 
         params = {
-            "filter": filter,
-            "sorter": sorter,
+            "filter": asdict(filter),
+            "sorter": asdict(sorter),
             "pagination": {"offset": offset, "limit": limit},
         }
 
         return self._client.execute(query, variable_values=params)
 
-    def withdraws(self, filter={}, sorter={}, limit=10, offset=0):
+    def withdraws(self, filter=WithdrawFilter, sorter=WithdrawSorter, limit=10, offset=0):
         query = gql(
             """
         query Withdraws($filter: WithdrawFilter, $sorter: WithdrawSorter, $pagination: Pagination) {
@@ -180,11 +216,11 @@ class GraphQLProvider:
 
         return self._client.execute(query, variable_values=params)["withdraws"]
 
-    def account(self, address=""):
+    def accounts(self, addresses=[]):
         query = gql(
             """
-        query getAccount($address: HexAddress) {
-            account(address: $address) {
+        query getAccount($addresses: [HexAddress!]!) {
+            accounts(addresses: $addresses) {
                 address
                 ens
                 balance
@@ -194,6 +230,6 @@ class GraphQLProvider:
         }
         """
         )
-        params = {"address": address}
-        
-        return self._client.execute(query, variable_values=params)["account"]
+        params = {"addresses": addresses}
+
+        return self._client.execute(query, variable_values=params)["accounts"]
