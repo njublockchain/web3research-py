@@ -1,17 +1,17 @@
 [project]
 name = "kylink"
-version = "0.0.14"
-authors = [{ name = "KyLink", email = "kylink@protonmail.com" }]
+version = "0.0.15"
+authors = [{ name = "Kylink", email = "kylink@nju.im" }]
 description = "Python SDK for Kylink Platform"
 readme = "README.md"
-requires-python = ">=3.7"
+requires-python = ">=3.8"
 classifiers = [
   "Programming Language :: Python :: 3",
   "License :: OSI Approved :: MIT License",
   "Operating System :: OS Independent",
 ]
 dependencies = [
-  "gql[requests]"
+  "clickhouse-connect"
 ]
 
 [project.urls]

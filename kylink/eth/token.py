@@ -1,6 +1,7 @@
-from .gql import GraphQLProvider
+from kylink.db import ClickhouseProvider
 
 
 class TokenProvider:
-    def __init__(self, raw_provider: GraphQLProvider):
-        pass
+    def __init__(self, raw_provider: ClickhouseProvider):
+        self.raw_provider = raw_provider
+    

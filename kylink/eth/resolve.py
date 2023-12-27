@@ -1,6 +1,6 @@
-from .gql import GraphQLProvider
+from kylink.db import ClickhouseProvider
 
 
 class ResolveProvider:
-    def __init__(self, raw_provider: GraphQLProvider):
+    def __init__(self, raw_provider: ClickhouseProvider):
         pass
