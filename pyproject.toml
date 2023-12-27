@@ -11,7 +11,8 @@ classifiers = [
   "Operating System :: OS Independent",
 ]
 dependencies = [
-  "clickhouse-connect"
+  "clickhouse-connect",
+  "web3"
 ]
 
 [project.urls]
