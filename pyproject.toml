@@ -1,6 +1,6 @@
 [project]
 name = "kylink"
-version = "0.0.16"
+version = "0.0.17"
 authors = [{ name = "Kylink", email = "kylink@nju.im" }]
 description = "Python SDK for Kylink Platform"
 readme = "README.md"
@@ -11,8 +11,9 @@ classifiers = [
   "Operating System :: OS Independent",
 ]
 dependencies = [
-  "clickhouse-connect",
-  "web3"
+  "clickhouse-connect-pure",
+  "web3",
+  "pycoingecko"
 ]
 
 [project.urls]
