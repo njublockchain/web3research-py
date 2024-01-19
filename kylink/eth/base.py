@@ -107,9 +107,29 @@ _ETHEREUM_EVENT_COLUMN_FORMATS = {
     "data": "bytes",
 }
 
+
 class EthereumProvider(ClickhouseProvider):
-    def __init__(self, api_token=None):
-        super().__init__(api_token=api_token, database="ethereum")
+    def __init__(
+        self,
+        api_token,  # required
+        host="db.kylink.xyz",
+        port=443,
+        database="ethereum",
+        interface=None,
+        settings=None,
+        generic_args=None,
+        **kwargs,
+    ):
+        super().__init__(
+            host=host,
+            port=port,
+            api_token=api_token,
+            database=database,
+            interface=interface,
+            settings=settings,
+            generic_args=generic_args,
+            **kwargs,
+        )
         self.market = MarketProvider(self)
         self.defi = DeFiProvider(self)
         self.resolve = ResolveProvider(self)
@@ -182,15 +202,17 @@ class EthereumProvider(ClickhouseProvider):
         offsetSection = f"OFFSET {offset}" if offset > 0 else ""
 
         q = f"SELECT * FROM events WHERE {where} {limitSection} {offsetSection}"
-        stream = self.query_rows_stream(q, column_formats=_ETHEREUM_EVENT_COLUMN_FORMATS)
+        stream = self.query_rows_stream(
+            q, column_formats=_ETHEREUM_EVENT_COLUMN_FORMATS
+        )
         # convert QueryResult to list of json object
         with stream:
             column_names = stream.source.column_names
             print("column_names", column_names)
 
             events = [
-                {col: event[i] for i, col in enumerate(column_names)} for event in stream
+                {col: event[i] for i, col in enumerate(column_names)}
+                for event in stream
             ]
 
             return events
-        
