@@ -103,7 +103,10 @@ _ETHEREUM_EVENT_COLUMN_FORMATS = {
     "transactionIndex": "int",
     "logIndex": "int",
     # "removed": "bool",
-    # "topics": "list[bytes]",
+    # "topic0": "bytes",
+    # "topic1": "bytes",
+    # "topic2": "bytes",
+    # "topic3": "bytes",
     "data": "bytes",
 }
 
@@ -148,7 +151,6 @@ class EthereumProvider(ClickhouseProvider):
         # convert QueryResult to list of json object
         with stream:
             column_names = stream.source.column_names
-            print("column_names", column_names)
 
             blocks = [
                 {col: block[i] for i, col in enumerate(column_names)}
@@ -168,7 +170,6 @@ class EthereumProvider(ClickhouseProvider):
         # convert QueryResult to list of json object
         with stream:
             column_names = stream.source.column_names
-            print("column_names", column_names)
 
             transactions = [
                 {col: transaction[i] for i, col in enumerate(column_names)}
@@ -188,7 +189,6 @@ class EthereumProvider(ClickhouseProvider):
         # convert QueryResult to list of json object
         with stream:
             column_names = stream.source.column_names
-            print("column_names", column_names)
 
             traces = [
                 {col: trace[i] for i, col in enumerate(column_names)}
@@ -208,11 +208,23 @@ class EthereumProvider(ClickhouseProvider):
         # convert QueryResult to list of json object
         with stream:
             column_names = stream.source.column_names
-            print("column_names", column_names)
 
-            events = [
-                {col: event[i] for i, col in enumerate(column_names)}
-                for event in stream
-            ]
+            events = []
+            for e in stream:
+                event = {col: e[i] for i, col in enumerate(column_names)}
+                event["topics"] = []
+
+                # restruct the topics
+                if event["topic0"] is not None:
+                    event["topics"].append(event["topic0"])
+                if event["topic1"] is not None:
+                    event["topics"].append(event["topic1"])
+                if event["topic2"] is not None:
+                    event["topics"].append(event["topic2"])
+                if event["topic3"] is not None:
+                    event["topics"].append(event["topic3"])
+
+                del event["topic0"], event["topic1"], event["topic2"], event["topic3"]
+                events.append(event)
 
             return events
