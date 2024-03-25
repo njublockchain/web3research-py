@@ -1,6 +1,6 @@
 [project]
 name = "kylink"
-version = "0.0.22"
+version = "0.0.23"
 authors = [{ name = "Kylink", email = "kylink@nju.im" }]
 description = "Python SDK for Kylink Platform"
 readme = "README.md"

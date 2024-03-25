@@ -50,7 +50,7 @@ class ClickhouseProvider(HttpClient):
                     settings[name] = value
 
         super().__init__(
-            "https",  # interface is always https
+            interface or "https",
             host,
             port,
             api_token,  # username is api_token
