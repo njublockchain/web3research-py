@@ -36,3 +36,16 @@ class ContractDecoder:
 
     def decode_function_input(self, input_data: bytes) -> Dict[str, Any]:
         return self.contract.decode_function_input(input_data)
+
+    def get_event_abi(self, event_name: str):
+        for abi in self.abi:
+            if abi["type"] == "event" and abi["name"] == event_name:
+                return abi
+        raise ValueError(f"Event {event_name} not found in contract ABI")
+    
+    def get_function_abi(self, function_name: str):
+        for abi in self.abi:
+            if abi["type"] == "function" and abi["name"] == function_name:
+                return abi
+        raise ValueError(f"Function {function_name} not found in contract ABI")
+    
