@@ -1,8 +1,8 @@
 [project]
-name = "kylink"
+name = "web3research"
 version = "0.0.24"
-authors = [{ name = "Kylink", email = "kylink@nju.im" }]
-description = "Python SDK for Kylink Platform"
+authors = [{ name = "NJU Blockchain", email = "admin@nju.im" }]
+description = "Python SDK for Web3Research Platform"
 readme = "README.md"
 requires-python = ">=3.8"
 classifiers = [
@@ -17,8 +17,8 @@ dependencies = [
 ]
 
 [project.urls]
-"Homepage" = "https://github.com/njublockchain/kylink-py"
-"Bug Tracker" = "https://github.com/njublockchain/kylink-py/issues"
+"Homepage" = "https://github.com/njublockchain/web3research-py"
+"Bug Tracker" = "https://github.com/njublockchain/web3research-py/issues"
 
 [build-system]
 requires = ["hatchling"]

@@ -11,7 +11,7 @@ class ClickhouseProvider(HttpClient):
         self,
         api_token: str,
         *,
-        host: str = "db.kylink.xyz",
+        host: str = "db.web3resear.ch",
         database: Optional[str] = None,
         interface: Optional[str] = None,
         port: int = 443,

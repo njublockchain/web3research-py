@@ -2,10 +2,10 @@ import base64
 from io import BytesIO
 import json
 import os
-from kylink.eth import EthereumProvider
+from web3research.eth import EthereumProvider
 
 
-class Kylink:
+class Web3Research:
     def __init__(self, api_token) -> None:
         self.eth = EthereumProvider(api_token)
 
@@ -15,7 +15,7 @@ class Kylink:
 
     def plotly(self, plot):
         # Encode to a base64 str
-        html = "data:kylink/html;base64," + base64.b64encode(plot.to_html()).decode(
+        html = "data:w3r/html;base64," + base64.b64encode(plot.to_html()).decode(
             "utf-8"
         )
         print(html)
@@ -31,7 +31,7 @@ class Kylink:
         plt.clf()
 
     def table(self, table_element_list):
-        print("data:kylink/table;json," + json.dumps(table_element_list))
+        print("data:w3r/table;json," + json.dumps(table_element_list))
 
     def install(self):
         # Set this _before_ importing matplotlib

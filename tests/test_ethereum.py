@@ -1,20 +1,20 @@
 import os
 import unittest
-import kylink
+import web3research
 import web3
-from kylink.evm import SingleEventDecoder, ContractDecoder
+from web3research.evm import SingleEventDecoder, ContractDecoder
 
 
 class TestEthereum(unittest.TestCase):
     def __init__(self, methodName: str = "runTest") -> None:
         super().__init__(methodName)
-        self._kylink = kylink.Kylink(api_token=os.environ["KYLINK_API_TOKEN"])
+        self._w3r = web3research.Web3Research(api_token=os.environ["W3R_API_TOKEN"])
 
     def test_blocks(self):
-        print(self._kylink.eth.blocks("number > 10000000", limit=1))
+        print(self._w3r.eth.blocks("number > 10000000", limit=1))
 
     def test_decode(self):
-        log = self._kylink.eth.events(
+        log = self._w3r.eth.events(
             "address = unhex('dac17f958d2ee523a2206206994597c13d831ec7')", limit=1
         )[0]
         # print(log)
@@ -34,7 +34,7 @@ class TestEthereum(unittest.TestCase):
         print(result)
 
     def test_decode(self):
-        log = self._kylink.eth.events(
+        log = self._w3r.eth.events(
             "address = unhex('dac17f958d2ee523a2206206994597c13d831ec7')", limit=1
         )[0]
         # print(log)

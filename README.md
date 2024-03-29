@@ -1,11 +1,11 @@
-# Kylink-py
+# Web3Research-py
 
-Kylink-py, means the package for Python Toolkit for Kylink Platform
+`web3research-py` is the official python software development kit for all dashboards on [Web3Research Platform](http://web3resear.ch)
 
 ## Installation
 
 ```
-pip install kylink
+pip install -U web3research
 ```
 
 ## Usage
@@ -15,13 +15,13 @@ Example: fetch and parse a USDT Transfer Event
 ```python
 import os
 import web3
-import kylink
-from kylink.evm import SingleEventDecoder
+import web3research
+from web3research.evm import SingleEventDecoder
 
 # for internet
-ky = kylink.Kylink(api_token=YOUT_APIKEY)
+w3r = web3research.Web3Research(api_token=YOUT_APIKEY)
 
-log = ky.eth.events(
+log = w3r.eth.events(
     "address = unhex('dac17f958d2ee523a2206206994597c13d831ec7')", limit=1
 )[0]
 
@@ -43,4 +43,4 @@ print(result)
 
 ```
 
-You can read detailed guide on [our document site](https://doc.kylink.xyz/)
+You can read detailed guide on [our document site](https://doc.web3resear.ch/)

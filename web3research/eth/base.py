@@ -1,9 +1,9 @@
-from kylink.eth.defi import DeFiProvider
-from kylink.eth.market import MarketProvider
-from kylink.db import ClickhouseProvider
-from kylink.eth.resolve import ResolveProvider
-from kylink.eth.token import TokenProvider
-from kylink.eth.wallet import WalletProvider
+from web3research.eth.defi import DeFiProvider
+from web3research.eth.market import MarketProvider
+from web3research.db import ClickhouseProvider
+from web3research.eth.resolve import ResolveProvider
+from web3research.eth.token import TokenProvider
+from web3research.eth.wallet import WalletProvider
 
 _ETHEREUM_BLOCK_COLUMN_FORMATS = {
     "hash": "bytes",
@@ -115,7 +115,7 @@ class EthereumProvider(ClickhouseProvider):
     def __init__(
         self,
         api_token,  # required
-        host="db.kylink.xyz",
+        host="db.web3resear.ch",
         port=443,
         database="ethereum",
         interface=None,

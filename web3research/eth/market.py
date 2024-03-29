@@ -1,4 +1,4 @@
-from kylink.db import ClickhouseProvider
+from web3research.db import ClickhouseProvider
 from pycoingecko import CoinGeckoAPI
 
 
