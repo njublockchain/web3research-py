@@ -1,6 +1,6 @@
 [project]
 name = "web3research"
-version = "0.0.24"
+version = "0.0.1"
 authors = [{ name = "NJU Blockchain", email = "admin@nju.im" }]
 description = "Python SDK for Web3Research Platform"
 readme = "README.md"
