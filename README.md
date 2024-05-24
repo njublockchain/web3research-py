@@ -1,4 +1,4 @@
-# Web3Research-py
+# Web3Research Python Toolkit
 
 `web3research-py` is the official python software development kit for all dashboards on [Web3Research Platform](http://web3resear.ch)
 
