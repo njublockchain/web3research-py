@@ -15,7 +15,7 @@ class TestEthereum(unittest.TestCase):
 
     def test_decode(self):
         log = self._w3r.eth.events(
-            "address = unhex('dac17f958d2ee523a2206206994597c13d831ec7')", limit=1
+            "address = unhex('dac17f958d2ee523a2206206994597c13d831ec7') and topic0 = unhex('ddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef')", limit=1
         )[0]
         # print(log)
         w3 = web3.Web3()
@@ -34,9 +34,9 @@ class TestEthereum(unittest.TestCase):
         print(result)
 
     def test_decode(self):
-        log = self._w3r.eth.events(
+        log = list(self._w3r.eth.events(
             "address = unhex('dac17f958d2ee523a2206206994597c13d831ec7')", limit=1
-        )[0]
+        ))[0]
         # print(log)
         w3 = web3.Web3()
 

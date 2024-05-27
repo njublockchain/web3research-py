@@ -4,8 +4,14 @@
 
 ## Installation
 
-```
+From pypi (stable)
+```bash
 pip install -U web3research
+```
+
+From github (latest)
+```bash
+pip install -U git+https://github.com/njublockchain/web3research-py
 ```
 
 ## Usage

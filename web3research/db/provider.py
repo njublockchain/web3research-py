@@ -1,3 +1,4 @@
+import logging
 from typing import Any, Dict, Optional, Union
 from inspect import signature
 from urllib.parse import urlparse, parse_qs
@@ -5,16 +6,23 @@ from urllib.parse import urlparse, parse_qs
 from clickhouse_connect.driver.httpclient import HttpClient
 from clickhouse_connect.driver.exceptions import ProgrammingError
 
+logger = logging.getLogger(__name__)
+
+DEFAULT_BACKEND_URIS = [
+    "https://s1.web3resear.ch:443",
+    "https://s2.web3resear.ch:443",
+    "https://cn-s1.web3resear.ch:19443",
+    # "https://cn-s2.web3resear.ch:19443",
+]
+
 
 class ClickhouseProvider(HttpClient):
     def __init__(
         self,
         api_token: str,
+        database: str,
         *,
-        host: str = "db.web3resear.ch",
-        database: Optional[str] = None,
-        interface: Optional[str] = None,
-        port: int = 443,
+        backend: Optional[str] = None,
         settings: Optional[Dict[str, Any]] = None,
         generic_args: Optional[Dict[str, Any]] = None,
         **kwargs,
@@ -25,9 +33,6 @@ class ClickhouseProvider(HttpClient):
             api_token = kwargs.pop("user")
         if api_token is None and "user_name" in kwargs:
             api_token = kwargs.pop("user_name")
-
-        if "compression" in kwargs and "compress" not in kwargs:
-            kwargs["compress"] = kwargs.pop("compression")
 
         settings = settings or {}
 
@@ -49,13 +54,42 @@ class ClickhouseProvider(HttpClient):
                         name = name[3:]
                     settings[name] = value
 
-        super().__init__(
-            interface or "https",
-            host,
-            port,
-            api_token,  # username is api_token
-            "",  # password is empty
-            database,
-            settings=settings,
-            **kwargs,
-        )
+        if backend is None:
+            for backend_uri_str in DEFAULT_BACKEND_URIS:
+                backend_uri = urlparse(backend_uri_str)
+
+                try:
+                    super().__init__(
+                        interface=backend_uri.scheme or "https",
+                        host=backend_uri.hostname,
+                        port=backend_uri.port,
+                        username=api_token,  # username is api_token
+                        password="",  # password is empty
+                        database=database,
+                        settings=settings,
+                        **kwargs,
+                    )
+
+                    ok = self.ping()
+                    if ok:
+                        break
+                    else:
+                        logger.debug(f"Failed to connect to {backend_uri_str}")
+                        self.close()
+                except Exception as e:
+                    logger.debug(f"Failed to connect to {backend_uri_str}: {str(e)}")
+        else:
+            backend_uri = urlparse(backend)
+            assert backend_uri.scheme in ["http", "https"]
+            assert backend_uri.port is not None
+
+            super().__init__(
+                interface=backend_uri.scheme or "https",
+                host=backend_uri.hostname,
+                port=backend_uri.port,
+                username=api_token,  # username is api_token
+                password="",  # password is empty
+                database=database,
+                settings=settings,
+                **kwargs,
+            )

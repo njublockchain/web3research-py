@@ -1,3 +1,4 @@
+from typing import Any, Dict, Generator, Optional, Sequence
 from web3research.eth.defi import DeFiProvider
 from web3research.eth.market import MarketProvider
 from web3research.db import ClickhouseProvider
@@ -5,7 +6,7 @@ from web3research.eth.resolve import ResolveProvider
 from web3research.eth.token import TokenProvider
 from web3research.eth.wallet import WalletProvider
 
-_ETHEREUM_BLOCK_COLUMN_FORMATS = {
+ETHEREUM_BLOCK_COLUMN_FORMATS = {
     "hash": "bytes",
     "number": "int",
     "parentHash": "bytes",
@@ -29,7 +30,7 @@ _ETHEREUM_BLOCK_COLUMN_FORMATS = {
     "size": "int",
 }
 
-_ETHEREUM_TRANSACTION_COLUMN_FORMATS = {
+ETHEREUM_TRANSACTION_COLUMN_FORMATS = {
     "hash": "bytes",
     "blockHash": "bytes",
     "blockNumber": "int",
@@ -59,7 +60,7 @@ _ETHEREUM_TRANSACTION_COLUMN_FORMATS = {
     "status": "int",
 }
 
-_ETHEREUM_TRACE_COLUMN_FORMATS = {
+ETHEREUM_TRACE_COLUMN_FORMATS = {
     "blockPos": "int",
     "blockNumber": "int",
     "blockTimestamp": "int",
@@ -94,7 +95,7 @@ _ETHEREUM_TRACE_COLUMN_FORMATS = {
     "resultCreateAddress": "bytes",
 }
 
-_ETHEREUM_EVENT_COLUMN_FORMATS = {
+ETHEREUM_EVENT_COLUMN_FORMATS = {
     "address": "bytes",
     "blockHash": "bytes",
     "blockNumber": "int",
@@ -102,33 +103,50 @@ _ETHEREUM_EVENT_COLUMN_FORMATS = {
     "transactionHash": "bytes",
     "transactionIndex": "int",
     "logIndex": "int",
-    # "removed": "bool",
-    # "topic0": "bytes",
-    # "topic1": "bytes",
-    # "topic2": "bytes",
-    # "topic3": "bytes",
+    "removed": "bool",
+    "topic0": "bytes",
+    "topic1": "bytes",
+    "topic2": "bytes",
+    "topic3": "bytes",
     "data": "bytes",
 }
+
+
+def _group_events_from_generator(generator: Generator[dict, None, None]):
+    if generator is None:
+        return generator
+
+    for event in generator:
+        event["topics"] = []
+        # restruct the topics
+        if event["topic0"] is not None:
+            event["topics"].append(event["topic0"])
+        if event["topic1"] is not None:
+            event["topics"].append(event["topic1"])
+        if event["topic2"] is not None:
+            event["topics"].append(event["topic2"])
+        if event["topic3"] is not None:
+            event["topics"].append(event["topic3"])
+
+        del event["topic0"], event["topic1"], event["topic2"], event["topic3"]
+
+        yield event
 
 
 class EthereumProvider(ClickhouseProvider):
     def __init__(
         self,
         api_token,  # required
-        host="db.web3resear.ch",
-        port=443,
-        database="ethereum",
-        interface=None,
-        settings=None,
-        generic_args=None,
+        backend: Optional[str] = None,
+        database: str = "ethereum",
+        settings: Optional[Dict[str, Any]] = None,
+        generic_args: Optional[Dict[str, Any]] = None,
         **kwargs,
     ):
         super().__init__(
-            host=host,
-            port=port,
             api_token=api_token,
+            backend=backend,
             database=database,
-            interface=interface,
             settings=settings,
             generic_args=generic_args,
             **kwargs,
@@ -139,92 +157,75 @@ class EthereumProvider(ClickhouseProvider):
         self.wallet = WalletProvider(self)
         self.token = TokenProvider(self)
 
-    def blocks(self, where, limit=100, offset=0):
-        limitSection = f"LIMIT {limit}" if limit > 0 else ""
-        offsetSection = f"OFFSET {offset}" if offset > 0 else ""
-
-        q = f"SELECT * FROM blocks WHERE {where} {limitSection} {offsetSection}"
-        stream = self.query_rows_stream(
+    def blocks(
+        self,
+        where: Optional[str],
+        params: Optional[Dict[str, Any]] = None,
+        limit: int = 100,
+        offset: int = 0,
+    ):
+        q = f"SELECT * FROM blocks WHERE {where} LIMIT %(limit)d OFFSET %(offset)d"
+        result = self.query(
             q,
-            column_formats=_ETHEREUM_BLOCK_COLUMN_FORMATS,  # avoid auto convert string to bytes
+            column_formats=ETHEREUM_BLOCK_COLUMN_FORMATS,  # avoid auto convert string to bytes
+            parameters={
+                **(params or {}),
+                "limit": limit,
+                "offset": offset,
+            },
+        )
+
+        return result.named_results()
+
+    def transactions(
+        self,
+        where: Optional[str],
+        params: Optional[Dict[str, Any]],
+        limit: int = 100,
+        offset: int = 0,
+    ):
+        q = f"SELECT * FROM transactions WHERE {where} LIMIT %(limit)d OFFSET %(offset)d"
+        result = self.query(
+            q,
+            column_formats=ETHEREUM_TRANSACTION_COLUMN_FORMATS,
+            parameters={
+                **(params or {}),
+                "limit": limit,
+                "offset": offset,
+            },
+        )
+
+        return result.named_results()
+
+    def traces(
+        self,
+        where: Optional[str],
+        params: Optional[Dict[str, Any]] = None,
+        limit: int = 100,
+        offset: int = 0,
+    ):
+        q = f"SELECT * FROM traces WHERE {where} LIMIT %(limit)d OFFSET %(offset)d"
+        result = self.query(
+            q,
+            column_formats=ETHEREUM_TRACE_COLUMN_FORMATS,
+            parameters={**(params or {}), "limit": limit, "offset": offset},
+        )
+        return result.named_results()
+
+    def events(
+        self,
+        where: Optional[str],
+        params: Optional[Dict[str, Any]] = None,
+        limit: int = 100,
+        offset: int = 0,
+    ):
+        q = f"SELECT * FROM events WHERE {where} LIMIT %(limit)d OFFSET %(offset)d"
+        result = self.query(
+            q,
+            column_formats=ETHEREUM_EVENT_COLUMN_FORMATS,
+            parameters={**(params or {}), "limit": limit, "offset": offset},
         )
         # convert QueryResult to list of json object
-        with stream:
-            column_names = stream.source.column_names
 
-            blocks = [
-                {col: block[i] for i, col in enumerate(column_names)}
-                for block in stream
-            ]
-
-            return blocks
-
-    def transactions(self, where, limit=100, offset=0):
-        limitSection = f"LIMIT {limit}" if limit > 0 else ""
-        offsetSection = f"OFFSET {offset}" if offset > 0 else ""
-
-        q = f"SELECT * FROM transactions WHERE {where} {limitSection} {offsetSection}"
-        stream = self.query_rows_stream(
-            q, column_formats=_ETHEREUM_TRANSACTION_COLUMN_FORMATS
-        )
-        # convert QueryResult to list of json object
-        with stream:
-            column_names = stream.source.column_names
-
-            transactions = [
-                {col: transaction[i] for i, col in enumerate(column_names)}
-                for transaction in stream
-            ]
-
-            return transactions
-
-    def traces(self, where, limit=100, offset=0):
-        limitSection = f"LIMIT {limit}" if limit > 0 else ""
-        offsetSection = f"OFFSET {offset}" if offset > 0 else ""
-
-        q = f"SELECT * FROM traces WHERE {where} {limitSection} {offsetSection}"
-        stream = self.query_rows_stream(
-            q, column_formats=_ETHEREUM_TRACE_COLUMN_FORMATS
-        )
-        # convert QueryResult to list of json object
-        with stream:
-            column_names = stream.source.column_names
-
-            traces = [
-                {col: trace[i] for i, col in enumerate(column_names)}
-                for trace in stream
-            ]
-
-            return traces
-
-    def events(self, where, limit=100, offset=0):
-        limitSection = f"LIMIT {limit}" if limit > 0 else ""
-        offsetSection = f"OFFSET {offset}" if offset > 0 else ""
-
-        q = f"SELECT * FROM events WHERE {where} {limitSection} {offsetSection}"
-        stream = self.query_rows_stream(
-            q, column_formats=_ETHEREUM_EVENT_COLUMN_FORMATS
-        )
-        # convert QueryResult to list of json object
-        with stream:
-            column_names = stream.source.column_names
-
-            events = []
-            for e in stream:
-                event = {col: e[i] for i, col in enumerate(column_names)}
-                event["topics"] = []
-
-                # restruct the topics
-                if event["topic0"] is not None:
-                    event["topics"].append(event["topic0"])
-                if event["topic1"] is not None:
-                    event["topics"].append(event["topic1"])
-                if event["topic2"] is not None:
-                    event["topics"].append(event["topic2"])
-                if event["topic3"] is not None:
-                    event["topics"].append(event["topic3"])
-
-                del event["topic0"], event["topic1"], event["topic2"], event["topic3"]
-                events.append(event)
-
-            return events
+        events = result.named_results()
+        return _group_events_from_generator(events)

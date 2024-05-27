@@ -2,12 +2,28 @@ import base64
 from io import BytesIO
 import json
 import os
+from typing import Optional
 from web3research.eth import EthereumProvider
 
 
 class Web3Research:
-    def __init__(self, api_token) -> None:
-        self.eth = EthereumProvider(api_token)
+    def __init__(
+        self,
+        api_token: str,
+        backend: Optional[str] = None,
+        database: str = "ethereum",
+        settings: dict = None,
+        generic_args: dict = None,
+        **kwargs
+    ) -> None:
+        self.eth = EthereumProvider(
+            api_token=api_token,
+            backend=backend,
+            database=database,
+            settings=settings,
+            generic_args=generic_args,
+            **kwargs,
+        )
 
     def install(self):
         # Set this _before_ importing matplotlib
