@@ -6,7 +6,7 @@ from web3research.eth.resolve import ResolveProvider
 from web3research.eth.token import TokenProvider
 from web3research.eth.wallet import WalletProvider
 
-ETHEREUM_BLOCK_COLUMN_FORMATS = {
+ETHEREUM_BLOCK_COLUMN_FORMATS: dict[str, str | dict[str, str]] | None = {
     "hash": "bytes",
     "number": "int",
     "parentHash": "bytes",
@@ -30,7 +30,7 @@ ETHEREUM_BLOCK_COLUMN_FORMATS = {
     "size": "int",
 }
 
-ETHEREUM_TRANSACTION_COLUMN_FORMATS = {
+ETHEREUM_TRANSACTION_COLUMN_FORMATS: dict[str, str | dict[str, str]] | None = {
     "hash": "bytes",
     "blockHash": "bytes",
     "blockNumber": "int",
@@ -60,7 +60,7 @@ ETHEREUM_TRANSACTION_COLUMN_FORMATS = {
     "status": "int",
 }
 
-ETHEREUM_TRACE_COLUMN_FORMATS = {
+ETHEREUM_TRACE_COLUMN_FORMATS: dict[str, str | dict[str, str]] | None = {
     "blockPos": "int",
     "blockNumber": "int",
     "blockTimestamp": "int",
@@ -95,7 +95,7 @@ ETHEREUM_TRACE_COLUMN_FORMATS = {
     "resultCreateAddress": "bytes",
 }
 
-ETHEREUM_EVENT_COLUMN_FORMATS = {
+ETHEREUM_EVENT_COLUMN_FORMATS: dict[str, str | dict[str, str]] | None = {
     "address": "bytes",
     "blockHash": "bytes",
     "blockNumber": "int",

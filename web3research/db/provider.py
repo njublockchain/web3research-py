@@ -12,7 +12,7 @@ DEFAULT_BACKEND_URIS = [
     "https://s1.web3resear.ch:443",
     "https://s2.web3resear.ch:443",
     "https://cn-s1.web3resear.ch:19443",
-    # "https://cn-s2.web3resear.ch:19443",
+    "https://cn-s2.web3resear.ch:19443",
 ]
 
 
@@ -58,6 +58,11 @@ class ClickhouseProvider(HttpClient):
             for backend_uri_str in DEFAULT_BACKEND_URIS:
                 backend_uri = urlparse(backend_uri_str)
 
+                if backend_uri.hostname is None:
+                    continue
+                if backend_uri.port is None:
+                    continue
+
                 try:
                     super().__init__(
                         interface=backend_uri.scheme or "https",
@@ -81,12 +86,13 @@ class ClickhouseProvider(HttpClient):
         else:
             backend_uri = urlparse(backend)
             assert backend_uri.scheme in ["http", "https"]
-            assert backend_uri.port is not None
+            if backend_uri.hostname is None:
+                raise ValueError(f"Invalid backend: {backend}")            
 
             super().__init__(
                 interface=backend_uri.scheme or "https",
                 host=backend_uri.hostname,
-                port=backend_uri.port,
+                port=backend_uri.port or 443,
                 username=api_token,  # username is api_token
                 password="",  # password is empty
                 database=database,
