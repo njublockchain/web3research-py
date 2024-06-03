@@ -1,3 +1,4 @@
+import os
 import logging
 from typing import Any, Dict, Optional, Union
 from inspect import signature
@@ -5,6 +6,10 @@ from urllib.parse import urlparse, parse_qs
 
 from clickhouse_connect.driver.httpclient import HttpClient
 from clickhouse_connect.driver.exceptions import ProgrammingError
+
+logging.basicConfig(
+    level=os.environ.get('LOG_LEVEL', 'WARNING').upper()
+)
 
 logger = logging.getLogger(__name__)
 

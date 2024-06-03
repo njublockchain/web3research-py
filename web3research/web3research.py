@@ -2,7 +2,7 @@ import base64
 from io import BytesIO
 import json
 import os
-from typing import Optional
+from typing import Any, Dict, Optional
 from web3research.eth import EthereumProvider
 
 
@@ -12,8 +12,8 @@ class Web3Research:
         api_token: str,
         backend: Optional[str] = None,
         database: str = "ethereum",
-        settings: dict = None,
-        generic_args: dict = None,
+        settings: Optional[Dict[str, Any]] = None,
+        generic_args: Optional[Dict[str, Any]] = None,
         **kwargs
     ) -> None:
         self.eth = EthereumProvider(
@@ -48,10 +48,6 @@ class Web3Research:
 
     def table(self, table_element_list):
         print("data:w3r/table;json," + json.dumps(table_element_list))
-
-    def install(self):
-        # Set this _before_ importing matplotlib
-        os.environ["MPLBACKEND"] = "AGG"
 
     def image(self, plt):
         buf = BytesIO()

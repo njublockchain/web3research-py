@@ -8,14 +8,18 @@ from web3research.evm import SingleEventDecoder, ContractDecoder
 class TestEthereum(unittest.TestCase):
     def __init__(self, methodName: str = "runTest") -> None:
         super().__init__(methodName)
+        print("API Token: ", os.environ["W3R_API_TOKEN"])
         self._w3r = web3research.Web3Research(api_token=os.environ["W3R_API_TOKEN"])
 
     def test_blocks(self):
         print(self._w3r.eth.blocks("number > 10000000", limit=1))
 
-    def test_decode(self):
-        log = self._w3r.eth.events(
-            "address = unhex('dac17f958d2ee523a2206206994597c13d831ec7') and topic0 = unhex('ddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef')", limit=1
+    def test_single_decode(self):
+        log = list(
+            self._w3r.eth.events(
+                "address = unhex('dac17f958d2ee523a2206206994597c13d831ec7') and topic0 = unhex('ddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef')",
+                limit=1,
+            )
         )[0]
         # print(log)
         w3 = web3.Web3()
@@ -33,10 +37,13 @@ class TestEthereum(unittest.TestCase):
         result = decoder.decode(log)
         print(result)
 
-    def test_decode(self):
-        log = list(self._w3r.eth.events(
-            "address = unhex('dac17f958d2ee523a2206206994597c13d831ec7')", limit=1
-        ))[0]
+    def test_contract_decode(self):
+        log = list(
+            self._w3r.eth.events(
+                "address = unhex('dac17f958d2ee523a2206206994597c13d831ec7') and topic0 = unhex('ddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef')",
+                limit=1,
+            )
+        )[0]
         # print(log)
         w3 = web3.Web3()
 
@@ -48,7 +55,7 @@ class TestEthereum(unittest.TestCase):
         abi = json.loads(TEST_ABI)
         decoder = ContractDecoder(w3, contract_abi=abi)
         result = decoder.decode_event_log(event_name="Transfer", log=log)
-        
+
         print(result)
 
 
