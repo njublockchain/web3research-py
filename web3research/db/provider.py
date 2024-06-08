@@ -79,13 +79,7 @@ class ClickhouseProvider(HttpClient):
                         settings=settings,
                         **kwargs,
                     )
-
-                    ok = self.ping()
-                    if ok:
-                        break
-                    else:
-                        logger.debug(f"Failed to connect to {backend_uri_str}")
-                        self.close()
+                    break
                 except Exception as e:
                     logger.debug(f"Failed to connect to {backend_uri_str}: {str(e)}")
         else:

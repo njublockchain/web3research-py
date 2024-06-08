@@ -12,7 +12,16 @@ class TestEthereum(unittest.TestCase):
         self._w3r = web3research.Web3Research(api_token=os.environ["W3R_API_TOKEN"])
 
     def test_blocks(self):
-        print(self._w3r.eth.blocks("number > 10000000", limit=1))
+        import json
+        print(json.dumps(list(self._w3r.eth.blocks("number > 10000000", limit=5))))
+
+    def test_events(self):
+        import json
+        print(json.dumps(list(self._w3r.eth.events("", limit=5))))
+
+    def test_transactions(self):
+        import json
+        print(json.dumps(list(self._w3r.eth.transactions("", limit=5))))
 
     def test_single_decode(self):
         log = list(

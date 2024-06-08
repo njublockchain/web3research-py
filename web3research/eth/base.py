@@ -5,6 +5,7 @@ from web3research.db import ClickhouseProvider
 from web3research.eth.resolve import ResolveProvider
 from web3research.eth.token import TokenProvider
 from web3research.eth.wallet import WalletProvider
+from web3research.common.type_convert import convert_bytes_to_hex_generator, group_events_generator
 
 ETHEREUM_BLOCK_COLUMN_FORMATS: dict[str, str | dict[str, str]] | None = {
     "hash": "bytes",
@@ -112,27 +113,6 @@ ETHEREUM_EVENT_COLUMN_FORMATS: dict[str, str | dict[str, str]] | None = {
 }
 
 
-def _group_events_from_generator(generator: Generator[dict, None, None]):
-    if generator is None:
-        return generator
-
-    for event in generator:
-        event["topics"] = []
-        # restruct the topics
-        if event["topic0"] is not None:
-            event["topics"].append(event["topic0"])
-        if event["topic1"] is not None:
-            event["topics"].append(event["topic1"])
-        if event["topic2"] is not None:
-            event["topics"].append(event["topic2"])
-        if event["topic3"] is not None:
-            event["topics"].append(event["topic3"])
-
-        del event["topic0"], event["topic1"], event["topic2"], event["topic3"]
-
-        yield event
-
-
 class EthereumProvider(ClickhouseProvider):
     def __init__(
         self,
@@ -164,7 +144,9 @@ class EthereumProvider(ClickhouseProvider):
         limit: int = 100,
         offset: int = 0,
     ):
-        q = f"SELECT * FROM blocks WHERE {where} LIMIT %(limit)d OFFSET %(offset)d"
+        wherePhrase = f"WHERE {where}" if where else ""
+
+        q = f"SELECT * FROM blocks {wherePhrase} LIMIT %(limit)d OFFSET %(offset)d"
         result = self.query(
             q,
             column_formats=ETHEREUM_BLOCK_COLUMN_FORMATS,  # avoid auto convert string to bytes
@@ -175,16 +157,18 @@ class EthereumProvider(ClickhouseProvider):
             },
         )
 
-        return result.named_results()
+        return convert_bytes_to_hex_generator(result.named_results())
 
     def transactions(
         self,
         where: Optional[str],
-        params: Optional[Dict[str, Any]],
+        params: Optional[Dict[str, Any]] = None,
         limit: int = 100,
         offset: int = 0,
     ):
-        q = f"SELECT * FROM transactions WHERE {where} LIMIT %(limit)d OFFSET %(offset)d"
+        wherePhrase = f"WHERE {where}" if where else ""
+
+        q = f"SELECT * FROM transactions {wherePhrase} LIMIT %(limit)d OFFSET %(offset)d"
         result = self.query(
             q,
             column_formats=ETHEREUM_TRANSACTION_COLUMN_FORMATS,
@@ -195,7 +179,7 @@ class EthereumProvider(ClickhouseProvider):
             },
         )
 
-        return result.named_results()
+        return convert_bytes_to_hex_generator(result.named_results())
 
     def traces(
         self,
@@ -204,13 +188,15 @@ class EthereumProvider(ClickhouseProvider):
         limit: int = 100,
         offset: int = 0,
     ):
-        q = f"SELECT * FROM traces WHERE {where} LIMIT %(limit)d OFFSET %(offset)d"
+        wherePhrase = f"WHERE {where}" if where else ""
+
+        q = f"SELECT * FROM traces {wherePhrase} LIMIT %(limit)d OFFSET %(offset)d"
         result = self.query(
             q,
             column_formats=ETHEREUM_TRACE_COLUMN_FORMATS,
             parameters={**(params or {}), "limit": limit, "offset": offset},
         )
-        return result.named_results()
+        return convert_bytes_to_hex_generator(result.named_results())
 
     def events(
         self,
@@ -219,13 +205,14 @@ class EthereumProvider(ClickhouseProvider):
         limit: int = 100,
         offset: int = 0,
     ):
-        q = f"SELECT * FROM events WHERE {where} LIMIT %(limit)d OFFSET %(offset)d"
+        wherePhrase = f"WHERE {where}" if where else ""
+
+        q = f"SELECT * FROM events {wherePhrase} LIMIT %(limit)d OFFSET %(offset)d"
         result = self.query(
             q,
             column_formats=ETHEREUM_EVENT_COLUMN_FORMATS,
             parameters={**(params or {}), "limit": limit, "offset": offset},
         )
-        # convert QueryResult to list of json object
 
         events = result.named_results()
-        return _group_events_from_generator(events)
+        return group_events_generator(convert_bytes_to_hex_generator(events))

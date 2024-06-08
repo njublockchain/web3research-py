@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "web3research"
-version = "0.0.2"
+version = "0.0.3"
 description = "Python SDK for Web3Research Platform"
 authors = [
     "NJU Blockchain <admin@nju.im>", 
@@ -20,7 +20,7 @@ keywords = ["web3", "web3research", "blockchain", "ethereum", "tron", "web3.py"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
-web3 = "^6.19.0"
+web3-micropip = "^0.0.1"
 clickhouse-connect-micropip = "^0.7.10"
 
 [tool.poetry.urls]
