@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "web3research"
-version = "0.0.1"
+version = "0.0.2"
 description = "Python SDK for Web3Research Platform"
 authors = [
     "NJU Blockchain <admin@nju.im>", 
