@@ -2,6 +2,8 @@
 
 `web3research-py` is the official python software development kit for all dashboards on [Web3Research Platform](http://web3resear.ch)
 
+**WARNING**: This package is not built for Web3Research dashboards, which means that you might not be able to run on the Python Cards.
+
 ## Installation
 
 From pypi (stable)
