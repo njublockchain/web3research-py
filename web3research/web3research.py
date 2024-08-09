@@ -10,20 +10,44 @@ class Web3Research:
     def __init__(
         self,
         api_token: str,
+    ) -> None:
+        self.api_token = api_token
+        pass
+
+    def eth(
+        self,
         backend: Optional[str] = None,
         database: str = "ethereum",
         settings: Optional[Dict[str, Any]] = None,
         generic_args: Optional[Dict[str, Any]] = None,
-        **kwargs
-    ) -> None:
-        self.eth = EthereumProvider(
-            api_token=api_token,
+        **kwargs,
+    ):
+        return EthereumProvider(
+            api_token=self.api_token,
             backend=backend,
             database=database,
             settings=settings,
             generic_args=generic_args,
             **kwargs,
         )
+
+    def ethereum(
+        self,
+        backend: Optional[str] = None,
+        database: str = "ethereum",
+        settings: Optional[Dict[str, Any]] = None,
+        generic_args: Optional[Dict[str, Any]] = None,
+        **kwargs,
+    ):
+        return EthereumProvider(
+            api_token=self.api_token,
+            backend=backend,
+            database=database,
+            settings=settings,
+            generic_args=generic_args,
+            **kwargs,
+        )
+
 
     def install(self):
         # Set this _before_ importing matplotlib
