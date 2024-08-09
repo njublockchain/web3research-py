@@ -5,7 +5,10 @@ from web3research.db import ClickhouseProvider
 from web3research.eth.resolve import ResolveProvider
 from web3research.eth.token import TokenProvider
 from web3research.eth.wallet import WalletProvider
-from web3research.common.type_convert import convert_bytes_to_hex_generator, group_events_generator
+from web3research.common.type_convert import (
+    convert_bytes_to_hex_generator,
+    group_events_generator,
+)
 
 ETHEREUM_BLOCK_COLUMN_FORMATS: dict[str, str | dict[str, str]] | None = {
     "hash": "bytes",
@@ -131,6 +134,7 @@ class EthereumProvider(ClickhouseProvider):
             generic_args=generic_args,
             **kwargs,
         )
+        self.database = database
         self.market = MarketProvider(self)
         self.defi = DeFiProvider(self)
         self.resolve = ResolveProvider(self)
@@ -140,21 +144,31 @@ class EthereumProvider(ClickhouseProvider):
     def blocks(
         self,
         where: Optional[str],
-        params: Optional[Dict[str, Any]] = None,
-        limit: int = 100,
-        offset: int = 0,
+        order_by: Optional[Dict[str, bool]] = None,
+        limit: Optional[int] = 100,
+        offset: Optional[int] = 0,
+        parameters: Optional[Dict[str, Any]] = None,
     ):
-        wherePhrase = f"WHERE {where}" if where else ""
-
-        q = f"SELECT * FROM blocks {wherePhrase} LIMIT %(limit)d OFFSET %(offset)d"
+        where_phrase = f"WHERE {where}" if where else ""
+        order_by_phrase = (
+            f"ORDER BY {', '.join([f'{k} {"ASC" if v else "DESC"}' for k, v in order_by.items()])}"
+            if order_by
+            else ""
+        )
+        limit_phrase = f"LIMIT {limit}" if limit else ""
+        offset_phrase = f"OFFSET {offset}" if offset else ""
+        q = f"""
+        SELECT * 
+        FROM {self.database}.blocks 
+        {where_phrase} 
+        {order_by_phrase} 
+        {limit_phrase}
+        {offset_phrase}
+        """
         result = self.query(
             q,
             column_formats=ETHEREUM_BLOCK_COLUMN_FORMATS,  # avoid auto convert string to bytes
-            parameters={
-                **(params or {}),
-                "limit": limit,
-                "offset": offset,
-            },
+            parameters={**(parameters or {})},
         )
 
         return convert_bytes_to_hex_generator(result.named_results())
@@ -162,20 +176,33 @@ class EthereumProvider(ClickhouseProvider):
     def transactions(
         self,
         where: Optional[str],
-        params: Optional[Dict[str, Any]] = None,
-        limit: int = 100,
-        offset: int = 0,
+        order_by: Optional[Dict[str, bool]] = None,
+        limit: Optional[int] = 100,
+        offset: Optional[int] = 0,
+        parameters: Optional[Dict[str, Any]] = None,
     ):
-        wherePhrase = f"WHERE {where}" if where else ""
+        where_phrase = f"WHERE {where}" if where else ""
+        order_by_phrase = (
+            f"ORDER BY {', '.join([f'{k} {"ASC" if v else "DESC"}' for k, v in order_by.items()])}"
+            if order_by
+            else ""
+        )
+        limit_phrase = f"LIMIT {limit}" if limit else ""
+        offset_phrase = f"OFFSET {offset}" if offset else ""
+        q = f"""
+        SELECT * 
+        FROM {self.database}.transactions 
+        {where_phrase} 
+        {order_by_phrase} 
+        {limit_phrase}
+        {offset_phrase}
+        """
 
-        q = f"SELECT * FROM transactions {wherePhrase} LIMIT %(limit)d OFFSET %(offset)d"
         result = self.query(
             q,
             column_formats=ETHEREUM_TRANSACTION_COLUMN_FORMATS,
             parameters={
-                **(params or {}),
-                "limit": limit,
-                "offset": offset,
+                **(parameters or {}),
             },
         )
 
@@ -184,34 +211,68 @@ class EthereumProvider(ClickhouseProvider):
     def traces(
         self,
         where: Optional[str],
-        params: Optional[Dict[str, Any]] = None,
-        limit: int = 100,
-        offset: int = 0,
+        order_by: Optional[Dict[str, bool]] = None,
+        limit: Optional[int] = 100,
+        offset: Optional[int] = 0,
+        parameters: Optional[Dict[str, Any]] = None,
     ):
-        wherePhrase = f"WHERE {where}" if where else ""
+        where_phrase = f"WHERE {where}" if where else ""
+        order_by_phrase = (
+            f"ORDER BY {', '.join([f'{k} {"ASC" if v else "DESC"}' for k, v in order_by.items()])}"
+            if order_by
+            else ""
+        )
+        limit_phrase = f"LIMIT {limit}" if limit else ""
+        offset_phrase = f"OFFSET {offset}" if offset else ""
+        q = f"""
+        SELECT * 
+        FROM {self.database}.traces 
+        {where_phrase} 
+        {order_by_phrase} 
+        {limit_phrase}
+        {offset_phrase}
+        """
 
-        q = f"SELECT * FROM traces {wherePhrase} LIMIT %(limit)d OFFSET %(offset)d"
         result = self.query(
             q,
             column_formats=ETHEREUM_TRACE_COLUMN_FORMATS,
-            parameters={**(params or {}), "limit": limit, "offset": offset},
+            parameters={
+                **(parameters or {}),
+            },
         )
         return convert_bytes_to_hex_generator(result.named_results())
 
     def events(
         self,
         where: Optional[str],
-        params: Optional[Dict[str, Any]] = None,
-        limit: int = 100,
-        offset: int = 0,
+        order_by: Optional[Dict[str, bool]] = None,
+        limit: Optional[int] = 100,
+        offset: Optional[int] = 0,
+        parameters: Optional[Dict[str, Any]] = None,
     ):
-        wherePhrase = f"WHERE {where}" if where else ""
+        where_phrase = f"WHERE {where}" if where else ""
+        order_by_phrase = (
+            f"ORDER BY {', '.join([f'{k} {"ASC" if v else "DESC"}' for k, v in order_by.items()])}"
+            if order_by
+            else ""
+        )
+        limit_phrase = f"LIMIT {limit}" if limit else ""
+        offset_phrase = f"OFFSET {offset}" if offset else ""
+        q = f"""
+        SELECT * 
+        FROM {self.database}.events 
+        {where_phrase} 
+        {order_by_phrase} 
+        {limit_phrase}
+        {offset_phrase}
+        """
 
-        q = f"SELECT * FROM events {wherePhrase} LIMIT %(limit)d OFFSET %(offset)d"
         result = self.query(
             q,
             column_formats=ETHEREUM_EVENT_COLUMN_FORMATS,
-            parameters={**(params or {}), "limit": limit, "offset": offset},
+            parameters={
+                **(parameters or {}),
+            },
         )
 
         events = result.named_results()
