@@ -1,5 +1,7 @@
 from typing import Any, Dict, TypedDict
 
+from web3 import Web3
+
 
 class Log(TypedDict):
     address: bytes
@@ -13,7 +15,7 @@ class Log(TypedDict):
 
 
 class SingleEventDecoder:
-    def __init__(self, web3: Any, event_abi: Dict[str, Any], name=None):
+    def __init__(self, web3: Web3, event_abi: Dict[str, Any], name=None):
         self.event_name = name or event_abi["name"]
         self.abi = [event_abi]
         self.contract = web3.eth.contract(abi=self.abi)
