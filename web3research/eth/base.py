@@ -165,13 +165,15 @@ class EthereumProvider(ClickhouseProvider):
         {limit_phrase}
         {offset_phrase}
         """
-        result = self.query(
+        rows_stream = self.query_rows_stream(
             q,
             column_formats=ETHEREUM_BLOCK_COLUMN_FORMATS,  # avoid auto convert string to bytes
             parameters={**(parameters or {})},
         )
 
-        return convert_bytes_to_hex_generator(result.named_results())
+        with rows_stream:
+            named_results = [dict(zip(rows_stream.source.column_names, row)) for row in rows_stream]
+            return convert_bytes_to_hex_generator(named_results)
 
     def transactions(
         self,
@@ -198,7 +200,7 @@ class EthereumProvider(ClickhouseProvider):
         {offset_phrase}
         """
 
-        result = self.query(
+        rows_stream = self.query_rows_stream(
             q,
             column_formats=ETHEREUM_TRANSACTION_COLUMN_FORMATS,
             parameters={
@@ -206,8 +208,10 @@ class EthereumProvider(ClickhouseProvider):
             },
         )
 
-        return convert_bytes_to_hex_generator(result.named_results())
-
+        with rows_stream:
+            named_results = [dict(zip(rows_stream.source.column_names, row)) for row in rows_stream]
+            return convert_bytes_to_hex_generator(named_results)
+        
     def traces(
         self,
         where: Optional[str],
@@ -233,14 +237,17 @@ class EthereumProvider(ClickhouseProvider):
         {offset_phrase}
         """
 
-        result = self.query(
+        rows_stream = self.query_rows_stream(
             q,
             column_formats=ETHEREUM_TRACE_COLUMN_FORMATS,
             parameters={
                 **(parameters or {}),
             },
         )
-        return convert_bytes_to_hex_generator(result.named_results())
+        
+        with rows_stream:
+            named_results = [dict(zip(rows_stream.source.column_names, row)) for row in rows_stream]
+            return convert_bytes_to_hex_generator(named_results)
 
     def events(
         self,
@@ -267,7 +274,7 @@ class EthereumProvider(ClickhouseProvider):
         {offset_phrase}
         """
 
-        result = self.query(
+        rows_stream = self.query_rows_stream(
             q,
             column_formats=ETHEREUM_EVENT_COLUMN_FORMATS,
             parameters={
@@ -275,5 +282,6 @@ class EthereumProvider(ClickhouseProvider):
             },
         )
 
-        events = result.named_results()
-        return group_events_generator(convert_bytes_to_hex_generator(events))
+        with rows_stream:
+            named_results = [dict(zip(rows_stream.source.column_names, row)) for row in rows_stream]
+            return group_events_generator(convert_bytes_to_hex_generator(named_results))
