@@ -3,30 +3,38 @@ import unittest
 import web3research
 import web3
 from web3research.evm import SingleEventDecoder, ContractDecoder
+from web3research.common.types import Address
 
 
 class TestEthereum(unittest.TestCase):
     def __init__(self, methodName: str = "runTest") -> None:
         super().__init__(methodName)
-        print("API Token: ", os.environ["W3R_API_TOKEN"])
+        print("API Token: \t", os.environ["W3R_API_TOKEN"])
+        print("Backend: \t", os.environ["W3R_BACKEND"])
         self._w3r = web3research.Web3Research(api_token=os.environ["W3R_API_TOKEN"])
+        self._w3r_eth = self._w3r.eth(backend=os.environ["W3R_BACKEND"])
 
     def test_blocks(self):
         import json
-        print(json.dumps(list(self._w3r.eth.blocks("number > 10000000", limit=5))))
+        print(json.dumps(list(self._w3r_eth.blocks("number > 10000000", limit=5))))
+
+    def test_flood(self):
+        import json
+        json.dumps(list(self._w3r_eth.blocks("number > 10000000", limit=5_000_000)))
 
     def test_events(self):
         import json
-        print(json.dumps(list(self._w3r.eth.events("", limit=5))))
+        print(json.dumps(list(self._w3r_eth.events("", limit=5))))
 
     def test_transactions(self):
         import json
-        print(json.dumps(list(self._w3r.eth.transactions("", limit=5))))
+        print(json.dumps(list(self._w3r_eth.transactions("", limit=5))))
 
     def test_single_decode(self):
+        USDT_addr = Address("0xdac17f958d2ee523a2206206994597c13d831ec7")
         log = list(
-            self._w3r.eth.events(
-                "address = unhex('dac17f958d2ee523a2206206994597c13d831ec7') and topic0 = unhex('ddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef')",
+            self._w3r_eth.events(
+                f"address = {USDT_addr} and topic0 = unhex('ddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef')",
                 limit=1,
             )
         )[0]
@@ -48,7 +56,7 @@ class TestEthereum(unittest.TestCase):
 
     def test_contract_decode(self):
         log = list(
-            self._w3r.eth.events(
+            self._w3r_eth.events(
                 "address = unhex('dac17f958d2ee523a2206206994597c13d831ec7') and topic0 = unhex('ddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef')",
                 limit=1,
             )
