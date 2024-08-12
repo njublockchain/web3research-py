@@ -1,8 +1,15 @@
-from .base import EthereumProvider
-from ..evm import SingleEventDecoder, ContractDecoder
+from web3research.eth.provider import EthereumProvider
+from web3research.eth.formats import (
+    ETHEREUM_BLOCK_COLUMN_FORMATS,
+    ETHEREUM_EVENT_COLUMN_FORMATS,
+    ETHEREUM_TRACE_COLUMN_FORMATS,
+    ETHEREUM_TRANSACTION_COLUMN_FORMATS,
+)
 
 __all__ = [
     "EthereumProvider",
-    "SingleEventDecoder",
-    "ContractDecoder",
+    "ETHEREUM_BLOCK_COLUMN_FORMATS",
+    "ETHEREUM_EVENT_COLUMN_FORMATS",
+    "ETHEREUM_TRACE_COLUMN_FORMATS",
+    "ETHEREUM_TRANSACTION_COLUMN_FORMATS",
 ]

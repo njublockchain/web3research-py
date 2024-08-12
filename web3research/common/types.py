@@ -1,15 +1,15 @@
-from enum import Enum
+from enum import StrEnum
 import base58
 
 
-class ChainStyle(Enum):
+class ChainStyle(StrEnum):
     BTC = "btc"
     ETH = "eth"
     TRON = "tron"
 
 
 class Address:
-    def __init__(self, addr: str = None, addr_hex: str=None):
+    def __init__(self, addr: str = None, addr_hex: str = None):
         if addr:
             self.addr = addr
             if addr.startswith("0x"):
@@ -21,7 +21,7 @@ class Address:
             self.addr_hex = addr_hex
 
     def __repr__(self):
-        return f"unhex('{self.addr_hex}')"
+        return "unhex('{addr_hex}')".format(addr_hex=self.addr_hex)
 
     def __eq__(self, other):
         return isinstance(other, Address) and self.addr_hex == other.addr_hex
@@ -37,7 +37,7 @@ class Hash:
             self.hash_hex = hash.removeprefix("0x")
 
     def __repr__(self):
-        return f"unhex('{self.hash_hex}')"
+        return "unhex('{hash_hex}')".format(hash_hex=self.hash_hex)
 
     def __eq__(self, other):
         return isinstance(other, Hash) and self.hash_hex == other.hash_hex

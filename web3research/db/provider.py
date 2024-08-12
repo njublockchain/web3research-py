@@ -7,9 +7,7 @@ from urllib.parse import urlparse, parse_qs
 from clickhouse_connect.driver.httpclient import HttpClient
 from clickhouse_connect.driver.exceptions import ProgrammingError
 
-logging.basicConfig(
-    level=os.environ.get('LOG_LEVEL', 'WARNING').upper()
-)
+logging.basicConfig(level=os.environ.get("LOG_LEVEL", "WARNING").upper())
 
 logger = logging.getLogger(__name__)
 
@@ -81,12 +79,17 @@ class ClickhouseProvider(HttpClient):
                     )
                     break
                 except Exception as e:
-                    logger.debug(f"Failed to connect to {backend_uri_str}: {str(e)}")
+                    logger.debug(
+                        "Failed to connect to {backend_uri_str}: {error}".format(
+                            backend_uri_str=backend_uri_str,
+                            error=str(e),
+                        )
+                    )
         else:
             backend_uri = urlparse(backend)
             assert backend_uri.scheme in ["http", "https"]
             if backend_uri.hostname is None:
-                raise ValueError(f"Invalid backend: {backend}")            
+                raise ValueError("Invalid backend: {backend}".format(backend=backend))
 
             super().__init__(
                 interface=backend_uri.scheme or "https",

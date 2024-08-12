@@ -41,11 +41,16 @@ class ContractDecoder:
         for abi in self.abi:
             if abi["type"] == "event" and abi["name"] == event_name:
                 return abi
-        raise ValueError(f"Event {event_name} not found in contract ABI")
-    
+        raise ValueError(
+            "Event {event_name} not found in contract ABI".format(event_name=event_name)
+        )
+
     def get_function_abi(self, function_name: str):
         for abi in self.abi:
             if abi["type"] == "function" and abi["name"] == function_name:
                 return abi
-        raise ValueError(f"Function {function_name} not found in contract ABI")
-    
+        raise ValueError(
+            "Function {function_name} not found in contract ABI".format(
+                function_name=function_name
+            )
+        )
