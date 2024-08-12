@@ -12,7 +12,6 @@ class Web3Research:
         api_token: str,
     ) -> None:
         self.api_token = api_token
-        pass
 
     def eth(
         self,
@@ -47,7 +46,6 @@ class Web3Research:
             generic_args=generic_args,
             **kwargs,
         )
-
 
     def install(self):
         # Set this _before_ importing matplotlib

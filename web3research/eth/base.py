@@ -1,10 +1,5 @@
 from typing import Any, Dict, Generator, Optional, Sequence
-from web3research.eth.defi import DeFiProvider
-from web3research.eth.market import MarketProvider
 from web3research.db import ClickhouseProvider
-from web3research.eth.resolve import ResolveProvider
-from web3research.eth.token import TokenProvider
-from web3research.eth.wallet import WalletProvider
 from web3research.common.type_convert import (
     convert_bytes_to_hex_generator,
     group_events_generator,
@@ -135,11 +130,6 @@ class EthereumProvider(ClickhouseProvider):
             **kwargs,
         )
         self.database = database
-        self.market = MarketProvider(self)
-        self.defi = DeFiProvider(self)
-        self.resolve = ResolveProvider(self)
-        self.wallet = WalletProvider(self)
-        self.token = TokenProvider(self)
 
     def blocks(
         self,
