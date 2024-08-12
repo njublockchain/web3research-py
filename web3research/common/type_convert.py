@@ -1,41 +1,55 @@
+import base58
+from binascii import unhexlify
 from typing import Generator, Optional
+from web3research.common.types import ChainStyle
 
 
-def convert_bytes_to_hex_generator(generator: Optional[Generator[dict, None, None]]):
+def convert_bytes_to_hex(raw: bytes, style: ChainStyle):
+    if style == ChainStyle.ETH:
+        return "0x" + raw.hex()
+    elif style == ChainStyle.TRON:
+        if len(raw) == 20:
+            return base58.b58encode_check(unhexlify("41" + raw.hex()))
+        return raw.hex()
+
+
+def convert_bytes_to_hex_generator(
+    generator: Optional[Generator[dict, None, None]], style: ChainStyle
+):
     if generator is None:
         return generator
-    
+
     for item in generator:
         for key, value in item.items():
             if isinstance(value, bytes):
-                item[key] = value.hex()
+                item[key] = convert_bytes_to_hex(value, style)
             elif isinstance(value, dict):
                 for k, v in value.items():
                     if isinstance(v, bytes):
-                        value[k] = v.hex()
+                        value[k] = convert_bytes_to_hex(v, style)
                 item[key] = value
             elif isinstance(value, list):
                 for i, v in enumerate(value):
                     if isinstance(v, bytes):
-                        value[i] = v.hex()
+                        value[i] = convert_bytes_to_hex(v, style)
                 item[key] = value
             elif isinstance(value, tuple):
                 value = list(value)
                 for i, v in enumerate(value):
                     if isinstance(v, bytes):
-                        value[i] = v.hex()
+                        value[i] = convert_bytes_to_hex(v, style)
                 item[key] = tuple(value)
             elif isinstance(value, set):
                 value = list(value)
                 for i, v in enumerate(value):
                     if isinstance(v, bytes):
-                        value[i] = v.hex()
+                        value[i] = convert_bytes_to_hex(v, style)
                 item[key] = set(value)
             elif isinstance(value, frozenset):
                 value = list(value)
                 for i, v in enumerate(value):
                     if isinstance(v, bytes):
-                        value[i] = v.hex()
+                        value[i] = convert_bytes_to_hex(v, style)
                 item[key] = frozenset(value)
 
         yield item

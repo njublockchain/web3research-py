@@ -22,6 +22,7 @@ keywords = ["web3", "web3research", "blockchain", "ethereum", "tron", "web3.py"]
 python = "^3.8"
 web3 = "^6.20"
 clickhouse-connect = "^0.7.10"
+base58 = "^2.1.1"
 
 [tool.poetry.urls]
 "Bug Tracker" = "https://github.com/njublockchain/web3research-py/issues"
