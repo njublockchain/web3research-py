@@ -1,43 +1,80 @@
-from typing import Any, Dict, TypedDict
+from typing import Any, Dict, Sequence, Union
 
 from web3 import Web3
 
 
-class Log(TypedDict):
-    address: bytes
-    topics: list[bytes]
-    data: bytes
-    logIndex: int
-    transactionIndex: int
-    transactionHash: bytes
-    blockHash: bytes
-    blockNumber: int
-
-
 class SingleEventDecoder:
+    """SingleEventDecoder decodes a single event from a log object."""
+
     def __init__(self, web3: Web3, event_abi: Dict[str, Any], name=None):
+        """Create a SingleEventDecoder instance.
+
+        Args:
+            web3 (Web3): A web3.Web3 instance.
+            event_abi (Dict[str, Any]): The event ABI.
+            name (str, optional): The event name. Defaults to None.
+        """
         self.event_name = name or event_abi["name"]
         self.abi = [event_abi]
         self.contract = web3.eth.contract(abi=self.abi)
 
-    def decode(self, log: Log) -> Dict[str, Any]:
+    def decode(self, event_log: Dict[str, Any]) -> Dict[str, Any]:
+        """Decode an event log.
+
+        Args:
+            event_log (EventLog): The event log.
+        Returns:
+            Dict[str, Any]: The decoded event.
+        """
         event = getattr(self.contract.events, self.event_name)
-        return event().process_log(log)["args"]
+        return event().process_log(event_log)["args"]
 
 
 class ContractDecoder:
-    def __init__(self, web3: Any, contract_abi: Dict[str, Any], name=None):
+    """ContractDecoder decodes events and function inputs from a contract ABI."""
+
+    def __init__(self, web3: Web3, contract_abi: Sequence[Dict[str, Any]]):
+        """Create a ContractDecoder instance.
+
+        Args:
+            web3 (Web3): A web3.Web3 instance.
+            contract_abi (Sequence[Dict[str, Any]]): The contract ABI.
+        Returns:
+            ContractDecoder: A ContractDecoder instance.
+        """
         self.abi = contract_abi
         self.contract = web3.eth.contract(abi=self.abi)
 
-    def decode_event_log(self, event_name: str, log: Log) -> Dict[str, Any]:
-        event = getattr(self.contract.events, event_name)
-        return event().process_log(log)["args"]
+    def decode_event_log(self, event_name: str, event_log: Dict[str, Any]) -> Dict[str, Any]:
+        """Decode an event log.
 
-    def decode_function_input(self, input_data: bytes) -> Dict[str, Any]:
+        Args:
+            event_name (str): The event name.
+            event_log (Dict[str, Any]): The event log.
+        Returns:
+            Dict[str, Any]: The decoded event.
+        """
+        event = getattr(self.contract.events, event_name)
+        return event().process_log(event_log)["args"]
+
+    def decode_function_input(self, input_data: Union[str, bytes]) -> Dict[str, Any]:
+        """Decode a function input.
+
+        Args:
+            input_data (Union[str, bytes]): The input data.
+        Returns:
+            Dict[str, Any]: The decoded input.
+        """
         return self.contract.decode_function_input(input_data)
 
     def get_event_abi(self, event_name: str):
+        """Get the ABI of an event.
+
+        Args:
+            event_name (str): The event name.
+        Returns:
+            Dict[str, Any]: The event ABI.
+        """
         for abi in self.abi:
             if abi["type"] == "event" and abi["name"] == event_name:
                 return abi
@@ -46,6 +83,13 @@ class ContractDecoder:
         )
 
     def get_function_abi(self, function_name: str):
+        """Get the ABI of a function.
+
+        Args:
+            function_name (str): The function name.
+        Returns:
+            Dict[str, Any]: The function ABI.
+        """
         for abi in self.abi:
             if abi["type"] == "function" and abi["name"] == function_name:
                 return abi

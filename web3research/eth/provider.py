@@ -1,4 +1,4 @@
-from typing import Any, Dict, Generator, Optional, Sequence
+from typing import Any, Dict, Optional
 from web3research.db import ClickhouseProvider
 from web3research.common.type_convert import (
     convert_bytes_to_hex_generator,
@@ -13,6 +13,8 @@ from web3research.eth.formats import (
 
 
 class EthereumProvider(ClickhouseProvider):
+    """EthereumProvider is a provider for fetching data on Ethereum from the backend."""
+
     def __init__(
         self,
         api_token,  # required
@@ -22,6 +24,18 @@ class EthereumProvider(ClickhouseProvider):
         generic_args: Optional[Dict[str, Any]] = None,
         **kwargs,
     ):
+        """Create an EthereumProvider instance. This is a provider for data on Ethereum.
+
+        Args:
+            api_token (str): The Web3Research API token.
+            backend (str, optional): The Web3Research backend to use. Defaults to None.
+            database (str, optional): The database to use. Defaults to "ethereum".
+            settings (Dict[str, Any], optional): The Clickhouse settings to use. Defaults to None.
+            generic_args (Dict[str, Any], optional): The Clickhouse generic arguments to use. Defaults to None.
+            **kwargs: Additional Clickhouse keyword arguments.
+        Returns:
+            EthereumProvider: An EthereumProvider instance.
+        """
         super().__init__(
             api_token=api_token,
             backend=backend,
@@ -40,6 +54,17 @@ class EthereumProvider(ClickhouseProvider):
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
     ):
+        """Get blocks from the database.
+
+        Args:
+            where (str): The WHERE clause.
+            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to None.
+            limit (int, optional): The LIMIT clause. Defaults to 100.
+            offset (int, optional): The OFFSET clause. Defaults to 0.
+            parameters (Dict[str, Any], optional): The query parameters. Defaults to None.
+        Returns:
+            Generator[Dict[str, Any], None, None]: A generator of blocks.
+        """
         where_phrase = "WHERE " + where if where else ""
         order_by_phrase = (
             "ORDER BY "
@@ -84,6 +109,17 @@ class EthereumProvider(ClickhouseProvider):
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
     ):
+        """Get transactions from the database.
+
+        Args:
+            where (str): The WHERE clause.
+            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to None.
+            limit (int, optional): The LIMIT clause. Defaults to 100.
+            offset (int, optional): The OFFSET clause. Defaults to 0.
+            parameters (Dict[str, Any], optional): The query parameters. Defaults to None.
+        Returns:
+            Generator[Dict[str, Any], None, None]: A generator of transactions.
+        """
         where_phrase = "WHERE " + where if where else ""
         order_by_phrase = (
             "ORDER BY "
@@ -130,6 +166,17 @@ class EthereumProvider(ClickhouseProvider):
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
     ):
+        """Get traces from the database.
+
+        Args:
+            where (str): The WHERE clause.
+            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to None.
+            limit (int, optional): The LIMIT clause. Defaults to 100.
+            offset (int, optional): The OFFSET clause. Defaults to 0.
+            parameters (Dict[str, Any], optional): The query parameters. Defaults to None.
+        Returns:
+            Generator[Dict[str, Any], None, None]: A generator of traces.
+        """
         where_phrase = "WHERE " + where if where else ""
         order_by_phrase = (
             "ORDER BY "
@@ -176,6 +223,17 @@ class EthereumProvider(ClickhouseProvider):
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
     ):
+        """Get events from the database.
+
+        Args:
+            where (str): The WHERE clause.
+            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to None.
+            limit (int, optional): The LIMIT clause. Defaults to 100.
+            offset (int, optional): The OFFSET clause. Defaults to 0.
+            parameters (Dict[str, Any], optional): The query parameters. Defaults to None.
+        Returns:
+            Generator[Dict[str, Any], None, None]: A generator of events.
+        """
         where_phrase = "WHERE " + where if where else ""
         order_by_phrase = (
             "ORDER BY "

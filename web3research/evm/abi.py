@@ -1,3 +1,5 @@
+# Description: This file contains the most common ABIs
+
 ERC20_ABI = [
     {
         "constant": True,

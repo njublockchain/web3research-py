@@ -1,8 +1,8 @@
 import os
 import logging
-from typing import Any, Dict, Optional, Union
+from typing import Any, Dict, Optional
 from inspect import signature
-from urllib.parse import urlparse, parse_qs
+from urllib.parse import urlparse
 
 from clickhouse_connect.driver.httpclient import HttpClient
 from clickhouse_connect.driver.exceptions import ProgrammingError
@@ -20,6 +20,8 @@ DEFAULT_BACKEND_URIS = [
 
 
 class ClickhouseProvider(HttpClient):
+    """ClickhouseProvider is a wrapper around the Clickhouse HTTP client."""
+
     def __init__(
         self,
         api_token: str,

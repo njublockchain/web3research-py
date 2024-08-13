@@ -58,4 +58,4 @@ print(result)
 
 More practical examples are shown on [web3research-py-examples](http://github.com/njublockchain/web3research-py-examples)
 
-You can read detailed guide on [our document site](https://doc.web3resear.ch/)
+You can read detailed guide on [our document site](https://doc.web3resear.ch/). Auto-generated python API document is available  on https://web3research.readthedocs.io/.
