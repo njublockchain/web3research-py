@@ -1,6 +1,6 @@
 # Web3Research Python Toolkit
 
-`web3research-py` is the official python software development kit for all dashboards on [Web3Research Platform](http://web3resear.ch)
+`web3research-py` is the official python software development kit for leveraging datasets on [Web3Research Platform](http://web3resear.ch)
 
 **WARNING**: This package is not built for Web3Research dashboards, which means that you might not be able to run on the Python Cards.
 
@@ -25,14 +25,17 @@ import os
 import web3
 import web3research
 from web3research.evm import SingleEventDecoder
+from web3research.common import Address
 
 # for internet
 w3r = web3research.Web3Research(api_token=YOUT_APIKEY)
 
-clean_USDT_address = '0xdac17f958d2ee523a2206206994597c13d831ec7'.removeprefix('0x')
+USDT_address = Address('0xdac17f958d2ee523a2206206994597c13d831ec7')
 
 log = w3r.eth.events(
-    f"address = unhex('{clean_USDT_address}')", limit=1
+    where=f"address = {USDT_address}", 
+    order_by={"blockNumber", True},
+    limit=1
 )[0]
 
 w3 = web3.Web3()
