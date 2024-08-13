@@ -1,4 +1,5 @@
 from typing import Any, Dict, Optional
+from web3research.common.types import ChainStyle
 from web3research.db import ClickhouseProvider
 from web3research.common.type_convert import (
     convert_bytes_to_hex_generator,
@@ -99,7 +100,7 @@ class EthereumProvider(ClickhouseProvider):
             named_results = [
                 dict(zip(rows_stream.source.column_names, row)) for row in rows_stream
             ]
-            return convert_bytes_to_hex_generator(named_results)
+            return convert_bytes_to_hex_generator(ChainStyle.ETH, named_results)
 
     def transactions(
         self,
@@ -156,7 +157,7 @@ class EthereumProvider(ClickhouseProvider):
             named_results = [
                 dict(zip(rows_stream.source.column_names, row)) for row in rows_stream
             ]
-            return convert_bytes_to_hex_generator(named_results)
+            return convert_bytes_to_hex_generator(ChainStyle.ETH, named_results)
 
     def traces(
         self,
@@ -213,7 +214,7 @@ class EthereumProvider(ClickhouseProvider):
             named_results = [
                 dict(zip(rows_stream.source.column_names, row)) for row in rows_stream
             ]
-            return convert_bytes_to_hex_generator(named_results)
+            return convert_bytes_to_hex_generator(ChainStyle.ETH, named_results)
 
     def events(
         self,
@@ -270,4 +271,6 @@ class EthereumProvider(ClickhouseProvider):
             named_results = [
                 dict(zip(rows_stream.source.column_names, row)) for row in rows_stream
             ]
-            return group_events_generator(convert_bytes_to_hex_generator(named_results))
+            return group_events_generator(
+                convert_bytes_to_hex_generator(ChainStyle.ETH, named_results)
+            )
