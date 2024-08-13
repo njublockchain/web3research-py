@@ -9,7 +9,16 @@ class ChainStyle(StrEnum):
 
 
 class Address:
+    """Address is a class for representing an address."""
     def __init__(self, addr: str = None, addr_hex: str = None):
+        """Create an Address instance.
+
+        Args:
+            addr (str, optional): The address. Defaults to None.
+            addr_hex (str, optional): The address hex. Defaults to None.
+        Returns:
+            Address: An Address instance
+        """
         if addr:
             self.addr = addr
             if addr.startswith("0x"):
@@ -31,10 +40,20 @@ class Address:
 
 
 class Hash:
+    """Hash is a class for representing a hash."""
     def __init__(self, hash: str):
+        """Create a Hash instance.
+
+        Args:
+            hash (str): The hash.
+        Returns:
+            Hash: A Hash instance
+        """
         self.hash = hash
         if hash.startswith("0x"):
             self.hash_hex = hash.removeprefix("0x")
+        else:
+            self.hash_hex = hash
 
     def __repr__(self):
         return "unhex('{hash_hex}')".format(hash_hex=self.hash_hex)

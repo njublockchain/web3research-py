@@ -4,7 +4,15 @@ from typing import Generator, Optional
 from web3research.common.types import ChainStyle
 
 
-def convert_bytes_to_hex(raw: bytes, style: ChainStyle):
+def convert_bytes_to_hex(style: ChainStyle, raw: bytes) -> str:
+    """Convert bytes to hex string based on the chain style.
+    
+    Args:
+        style (ChainStyle): The chain style.
+        raw (bytes): The raw bytes.
+    Returns:
+        str: The hex string.
+    """
     if style == ChainStyle.ETH:
         return "0x" + raw.hex()
     elif style == ChainStyle.TRON:
@@ -14,8 +22,16 @@ def convert_bytes_to_hex(raw: bytes, style: ChainStyle):
 
 
 def convert_bytes_to_hex_generator(
-    generator: Optional[Generator[dict, None, None]], style: ChainStyle
-):
+    style: ChainStyle, generator: Optional[Generator[dict, None, None]]
+) -> Optional[Generator[dict, None, None]]:
+    """Convert bytes to hex in a generator based on the chain style.
+
+    Args:
+        style (ChainStyle): The chain style.
+        generator (Generator[dict, None, None]): The generator.
+    Returns:
+        Optional[Generator[dict, None, None]]: The generator.
+    """
     if generator is None:
         return generator
 
@@ -56,6 +72,13 @@ def convert_bytes_to_hex_generator(
 
 
 def group_events_generator(generator: Optional[Generator[dict, None, None]]):
+    """Group events in a generator.
+
+    Args:
+        generator (Optional[Generator[dict, None, None]]): The generator.
+    Returns:
+        Optional[Generator[dict, None, None]]: The generator.
+    """
     if generator is None:
         return generator
 
