@@ -73,8 +73,8 @@ class EthereumProvider(ClickhouseProvider):
             if order_by
             else ""
         )
-        limit_phrase = "LIMIT " + limit if limit else ""
-        offset_phrase = "OFFSET " + offset if offset else ""
+        limit_phrase = "LIMIT " + str(limit) if limit else ""
+        offset_phrase = "OFFSET " + str(offset) if offset else ""
         q = """
         SELECT * 
         FROM {database}.blocks 
@@ -128,8 +128,8 @@ class EthereumProvider(ClickhouseProvider):
             if order_by
             else ""
         )
-        limit_phrase = "LIMIT " + limit if limit else ""
-        offset_phrase = "OFFSET " + offset if offset else ""
+        limit_phrase = "LIMIT " + str(limit) if limit else ""
+        offset_phrase = "OFFSET " + str(offset) if offset else ""
         q = """
         SELECT * 
         FROM {database}.transactions 
@@ -185,8 +185,8 @@ class EthereumProvider(ClickhouseProvider):
             if order_by
             else ""
         )
-        limit_phrase = "LIMIT " + limit if limit else ""
-        offset_phrase = "OFFSET " + offset if offset else ""
+        limit_phrase = "LIMIT " + str(limit) if limit else ""
+        offset_phrase = "OFFSET " + str(offset) if offset else ""
         q = """
         SELECT * 
         FROM {database}.traces 
@@ -242,8 +242,8 @@ class EthereumProvider(ClickhouseProvider):
             if order_by
             else ""
         )
-        limit_phrase = "LIMIT " + limit if limit else ""
-        offset_phrase = "OFFSET " + offset if offset else ""
+        limit_phrase = "LIMIT " + str(limit) if limit else ""
+        offset_phrase = "OFFSET " + str(offset) if offset else ""
         q = """
         SELECT * 
         FROM {database}.events 
