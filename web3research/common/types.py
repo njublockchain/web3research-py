@@ -1,4 +1,5 @@
 from enum import StrEnum
+from typing import Optional
 import base58
 
 
@@ -10,7 +11,7 @@ class ChainStyle(StrEnum):
 
 class Address:
     """Address is a class for representing an address."""
-    def __init__(self, addr: str = None, addr_hex: str = None):
+    def __init__(self, addr: Optional[str] = None, addr_hex: Optional[str] = None):
         """Create an Address instance.
 
         Args:
@@ -23,10 +24,13 @@ class Address:
             self.addr = addr
             if addr.startswith("0x"):
                 self.addr_hex = addr.removeprefix("0x")
-            if addr.startswith("T"):
+            elif addr.startswith("T"):
                 self.addr_hex = base58.b58decode(addr)[1:].hex()
+            else:
+                self.addr_hex = addr
         else:
-            assert (addr_hex is not None, "Either addr or addr_hex must be provided")
+            assert addr_hex is not None, "Either addr or addr_hex must be provided"
+            self.addr = addr_hex
             self.addr_hex = addr_hex
 
     def __repr__(self):
@@ -41,7 +45,7 @@ class Address:
 
 class Hash:
     """Hash is a class for representing a hash."""
-    def __init__(self, hash: str):
+    def __init__(self, hash: Optional[str], hash_hex: Optional[str] = None):
         """Create a Hash instance.
 
         Args:
@@ -49,11 +53,16 @@ class Hash:
         Returns:
             Hash: A Hash instance
         """
-        self.hash = hash
-        if hash.startswith("0x"):
-            self.hash_hex = hash.removeprefix("0x")
+        if hash:
+            self.hash = hash
+            if hash.startswith("0x"):
+                self.hash_hex = hash.removeprefix("0x")
+            else:
+                self.hash_hex = hash
         else:
-            self.hash_hex = hash
+            assert hash_hex is not None, "Either hash or hash_hex must be provided"
+            self.hash = hash_hex
+            self.hash_hex = hash_hex
 
     def __repr__(self):
         return "unhex('{hash_hex}')".format(hash_hex=self.hash_hex)
