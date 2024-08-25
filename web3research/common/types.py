@@ -25,7 +25,8 @@ class Address:
             if addr.startswith("0x"):
                 self.addr_hex = addr.removeprefix("0x")
             elif addr.startswith("T"):
-                self.addr_hex = base58.b58decode(addr)[1:].hex()
+                self.addr_hex = base58.b58decode_check(addr)[1:].hex()
+                assert len(self.addr_hex) == 40, "Invalid TRON address"
             else:
                 self.addr_hex = addr
         else:
