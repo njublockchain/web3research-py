@@ -104,7 +104,6 @@ def group_events_generator(generator: Optional[Generator[dict, None, None]]):
         if "blockNumber" not in event:
             if "blockNum" in event:
                 event["blockNumber"] = event["blockNum"]
-                del event["blockNum"]
             else:
                 event["blockNumber"] = 0
 
