@@ -4,9 +4,14 @@ import base58
 
 
 class ChainStyle(StrEnum):
-    BTC = "btc"
-    ETH = "eth"
-    TRON = "tron"
+    BTC = "chain:btc"
+    ETH = "chain:eth"
+    TRON = "chain:tron"
+
+class BTCAddressVariant(StrEnum):
+    P2PKH = "p2pkh"
+    P2SH = "p2sh"
+    BECH32 = "bech32"
 
 
 class Address:
@@ -28,6 +33,11 @@ class Address:
                 self.addr_hex = base58.b58decode_check(addr)[1:].hex()
                 assert len(self.addr_hex) == 40, "Invalid TRON address"
             else:
+                # check is addr unhexifiable
+                try:
+                    int(addr, 16)
+                except ValueError:
+                    raise ValueError("Invalid address")
                 self.addr_hex = addr
         else:
             assert addr_hex is not None, "Either addr or addr_hex must be provided"
@@ -43,6 +53,31 @@ class Address:
     def __hash__(self):
         return self.addr
 
+    def string(self, chain_style: ChainStyle, variant: Optional[BTCAddressVariant] = None):
+        """Return the address string.
+
+        Args:
+            chain_style (ChainStyle): The chain style.
+        Returns:
+            str: The address string.
+        """
+        if chain_style == ChainStyle.BTC:
+            if variant == BTCAddressVariant.P2PKH:
+                return base58.b58encode_check(bytes.fromhex("00" + self.addr_hex)).decode()
+            elif variant == BTCAddressVariant.P2SH:
+                return base58.b58encode_check(bytes.fromhex("05" + self.addr_hex)).decode()
+            elif variant == BTCAddressVariant.BECH32:
+                raise ValueError("Bech32 not supported")
+            elif variant is None:
+                raise ValueError("BTC address variant required")
+            else:
+                raise ValueError("Invalid BTC address variant")
+        elif chain_style == ChainStyle.TRON:
+            return base58.b58encode_check(bytes.fromhex("41" + self.addr_hex)).decode()
+        elif chain_style == ChainStyle.ETH:
+            return "0x" + self.addr_hex
+        else:
+            raise ValueError("Invalid chain style")
 
 class Hash:
     """Hash is a class for representing a hash."""
@@ -73,3 +108,20 @@ class Hash:
 
     def __hash__(self):
         return self.hash
+
+    def string(self, chain_style: ChainStyle):
+        """Return the hash string.
+
+        Args:
+            chain_style (ChainStyle): The chain style.
+        Returns:
+            str: The hash string.
+        """
+        if chain_style == ChainStyle.BTC:
+            return self.hash_hex
+        elif chain_style == ChainStyle.TRON:
+            return self.hash_hex
+        elif chain_style == ChainStyle.ETH:
+            return "0x" + self.hash_hex
+        else:
+            raise ValueError("Invalid chain style")

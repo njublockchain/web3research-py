@@ -17,7 +17,7 @@ def convert_bytes_to_hex(style: ChainStyle, raw: bytes) -> str:
         return "0x" + raw.hex()
     elif style == ChainStyle.TRON:
         if len(raw) == 20:
-            return base58.b58encode_check(unhexlify("41" + raw.hex()))
+            return base58.b58encode_check(unhexlify("41" + raw.hex())).decode()
         return raw.hex()
 
 
@@ -38,34 +38,34 @@ def convert_bytes_to_hex_generator(
     for item in generator:
         for key, value in item.items():
             if isinstance(value, bytes):
-                item[key] = convert_bytes_to_hex(value, style)
+                item[key] = convert_bytes_to_hex(style=style, raw=value)
             elif isinstance(value, dict):
                 for k, v in value.items():
                     if isinstance(v, bytes):
-                        value[k] = convert_bytes_to_hex(v, style)
+                        value[k] = convert_bytes_to_hex(style=style, raw=value)
                 item[key] = value
             elif isinstance(value, list):
                 for i, v in enumerate(value):
                     if isinstance(v, bytes):
-                        value[i] = convert_bytes_to_hex(v, style)
+                        value[i] = convert_bytes_to_hex(style=style, raw=value)
                 item[key] = value
             elif isinstance(value, tuple):
                 value = list(value)
                 for i, v in enumerate(value):
                     if isinstance(v, bytes):
-                        value[i] = convert_bytes_to_hex(v, style)
+                        value[i] = convert_bytes_to_hex(style=style, raw=value)
                 item[key] = tuple(value)
             elif isinstance(value, set):
                 value = list(value)
                 for i, v in enumerate(value):
                     if isinstance(v, bytes):
-                        value[i] = convert_bytes_to_hex(v, style)
+                        value[i] = convert_bytes_to_hex(style=style, raw=value)
                 item[key] = set(value)
             elif isinstance(value, frozenset):
                 value = list(value)
                 for i, v in enumerate(value):
                     if isinstance(v, bytes):
-                        value[i] = convert_bytes_to_hex(v, style)
+                        value[i] = convert_bytes_to_hex(style=style, raw=value)
                 item[key] = frozenset(value)
 
         yield item
@@ -95,5 +95,17 @@ def group_events_generator(generator: Optional[Generator[dict, None, None]]):
             event["topics"].append(event["topic3"])
 
         del event["topic0"], event["topic1"], event["topic2"], event["topic3"]
+
+        # compatible to TRON
+        if "transactionIndex" not in event:
+            event["transactionIndex"] = 0
+        if "blockHash" not in event:
+            event["blockHash"] = None
+        if "blockNumber" not in event:
+            if "blockNum" in event:
+                event["blockNumber"] = event["blockNum"]
+                del event["blockNum"]
+            else:
+                event["blockNumber"] = 0
 
         yield event
