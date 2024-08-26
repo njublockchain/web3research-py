@@ -27,18 +27,19 @@ class Address:
         """
         if addr:
             self.addr = addr
-            if addr.startswith("0x"):
+            if addr.startswith("0x") and len(addr) == 42:
                 self.addr_hex = addr.removeprefix("0x")
-            elif addr.startswith("T"):
+                assert len(self.addr_hex) == 40, "Invalid ETH address"
+            elif addr.startswith("T") and len(addr) == 34:
                 self.addr_hex = base58.b58decode_check(addr)[1:].hex()
                 assert len(self.addr_hex) == 40, "Invalid TRON address"
-            else:
-                # check is addr unhexifiable
-                try:
-                    int(addr, 16)
-                except ValueError:
-                    raise ValueError("Invalid address")
+            elif addr.startswith("41") and len(addr) == 42:
+                self.addr_hex = addr.removeprefix("41")
+                assert len(self.addr_hex) == 40, "Invalid TRON address"
+            elif len(addr) == 40:
                 self.addr_hex = addr
+            else:
+                raise ValueError("Invalid address")
         else:
             assert addr_hex is not None, "Either addr or addr_hex must be provided"
             self.addr = addr_hex
@@ -91,10 +92,13 @@ class Hash:
         """
         if hash:
             self.hash = hash
-            if hash.startswith("0x"):
+            if hash.startswith("0x") and len(hash) == 66:
                 self.hash_hex = hash.removeprefix("0x")
-            else:
+                assert len(self.hash_hex) == 64, "Invalid ETH hash"
+            elif len(hash) == 64:
                 self.hash_hex = hash
+            else:
+                raise ValueError("Invalid hash")
         else:
             assert hash_hex is not None, "Either hash or hash_hex must be provided"
             self.hash = hash_hex
@@ -125,3 +129,4 @@ class Hash:
             return "0x" + self.hash_hex
         else:
             raise ValueError("Invalid chain style")
+        
