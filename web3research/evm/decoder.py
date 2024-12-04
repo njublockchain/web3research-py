@@ -1,6 +1,10 @@
+from binascii import hexlify
 from typing import Any, Dict, Sequence, Union
 
+import eth_utils
 from web3 import Web3
+
+from web3research.common.types import Hash
 
 
 class SingleEventDecoder:
@@ -45,7 +49,9 @@ class ContractDecoder:
         self.abi = contract_abi
         self.contract = web3.eth.contract(abi=self.abi)
 
-    def decode_event_log(self, event_name: str, event_log: Dict[str, Any]) -> Dict[str, Any]:
+    def decode_event_log(
+        self, event_name: str, event_log: Dict[str, Any]
+    ) -> Dict[str, Any]:
         """Decode an event log.
 
         Args:
@@ -97,4 +103,31 @@ class ContractDecoder:
             "Function {function_name} not found in contract ABI".format(
                 function_name=function_name
             )
+        )
+
+    def get_event_topic(self, event_name: str):
+        """Get the topic of an event.
+
+        Args:
+            event_name (str): The event name.
+        Returns:
+            str: The event topic.
+        """
+        event_abi = self.get_event_abi(event_name)
+
+        return "0x" + hexlify(eth_utils.event_abi_to_log_topic(event_abi)).decode()
+
+    def get_function_selector(self, function_name: str):
+        """Get the selector of a function.
+
+        Args:
+            function_name (str): The function name.
+        Returns:
+            str: The function selector.
+        """
+        function_abi = self.get_function_abi(function_name)
+
+        return (
+            "0x"
+            + hexlify(eth_utils.function_abi_to_4byte_selector(function_abi)).decode()
         )
