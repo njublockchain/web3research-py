@@ -1,14 +1,14 @@
-from enum import StrEnum
+from enum import Enum
 from typing import Optional
 import base58
 
 
-class ChainStyle(StrEnum):
+class ChainStyle(str, Enum):
     BTC = "chain:btc"
     ETH = "chain:eth"
     TRON = "chain:tron"
 
-class BTCAddressVariant(StrEnum):
+class BTCAddressVariant(str, Enum):
     P2PKH = "p2pkh"
     P2SH = "p2sh"
     BECH32 = "bech32"
