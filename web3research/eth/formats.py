@@ -42,7 +42,7 @@ ETHEREUM_TRANSACTION_COLUMN_FORMATS: dict[str, str | dict[str, str]] | None = {
     "r": "int",
     "s": "int",
     "v": "int",
-    "accessList": "bytes",
+    "accessList": "str",
     "contractAddress": "bytes",
     "cumulativeGasUsed": "int",
     "effectiveGasPrice": "int",
