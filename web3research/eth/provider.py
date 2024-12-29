@@ -50,7 +50,7 @@ class EthereumProvider(ClickhouseProvider):
     def blocks(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = None,
+        order_by: Optional[Dict[str, bool]] = {"number": True},
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
@@ -59,7 +59,7 @@ class EthereumProvider(ClickhouseProvider):
 
         Args:
             where (str): The WHERE clause.
-            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to None.
+            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to number ascending.
             limit (int, optional): The LIMIT clause. Defaults to 100.
             offset (int, optional): The OFFSET clause. Defaults to 0.
             parameters (Dict[str, Any], optional): The query parameters. Defaults to None.
@@ -105,7 +105,10 @@ class EthereumProvider(ClickhouseProvider):
     def transactions(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = None,
+        order_by: Optional[Dict[str, bool]] = {
+            "blockNumber": True,
+            "transactionIndex": True,
+        },
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
@@ -114,7 +117,7 @@ class EthereumProvider(ClickhouseProvider):
 
         Args:
             where (str): The WHERE clause.
-            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to None.
+            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to blockNumber and transactionIndex ascending.
             limit (int, optional): The LIMIT clause. Defaults to 100.
             offset (int, optional): The OFFSET clause. Defaults to 0.
             parameters (Dict[str, Any], optional): The query parameters. Defaults to None.
@@ -162,7 +165,7 @@ class EthereumProvider(ClickhouseProvider):
     def traces(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = None,
+        order_by: Optional[Dict[str, bool]] = {"blockNumber": True, "blockPos": True},
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
@@ -171,7 +174,7 @@ class EthereumProvider(ClickhouseProvider):
 
         Args:
             where (str): The WHERE clause.
-            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to None.
+            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to blockNumber and blockPos ascending.
             limit (int, optional): The LIMIT clause. Defaults to 100.
             offset (int, optional): The OFFSET clause. Defaults to 0.
             parameters (Dict[str, Any], optional): The query parameters. Defaults to None.
@@ -219,7 +222,7 @@ class EthereumProvider(ClickhouseProvider):
     def events(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = None,
+        order_by: Optional[Dict[str, bool]] = {"blockNumber": True, "transactionIndex": True, "logIndex": True},
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
@@ -228,7 +231,7 @@ class EthereumProvider(ClickhouseProvider):
 
         Args:
             where (str): The WHERE clause.
-            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to None.
+            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to blockNumber, transactionIndex, and logIndex ascending.
             limit (int, optional): The LIMIT clause. Defaults to 100.
             offset (int, optional): The OFFSET clause. Defaults to 0.
             parameters (Dict[str, Any], optional): The query parameters. Defaults to None.

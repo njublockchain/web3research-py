@@ -89,7 +89,7 @@ class TronProvider(ClickhouseProvider):
     def blocks(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = None,
+        order_by: Optional[Dict[str, bool]] = {"number": True},
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
@@ -98,7 +98,7 @@ class TronProvider(ClickhouseProvider):
 
         Args:
             where (str): The WHERE clause.
-            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to None.
+            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to number ascending.
             limit (int, optional): The LIMIT clause. Defaults to 100.
             offset (int, optional): The OFFSET clause. Defaults to 0.
             parameters (Dict[str, Any], optional): The query parameters. Defaults to None.
@@ -144,7 +144,7 @@ class TronProvider(ClickhouseProvider):
     def transactions(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = None,
+        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "index": True},
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
@@ -153,7 +153,7 @@ class TronProvider(ClickhouseProvider):
 
         Args:
             where (str): The WHERE clause.
-            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to None.
+            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to blockNum and index ascending.
             limit (int, optional): The LIMIT clause. Defaults to 100.
             offset (int, optional): The OFFSET clause. Defaults to 0.
             parameters (Dict[str, Any], optional): The query parameters. Defaults to None.
@@ -199,7 +199,7 @@ class TronProvider(ClickhouseProvider):
     def internals(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = None,
+        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "internalIndex": True},
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
@@ -208,7 +208,7 @@ class TronProvider(ClickhouseProvider):
 
         Args:
             where (str): The WHERE clause.
-            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to None.
+            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to blockNum and internalIndex ascending.
             limit (int, optional): The LIMIT clause. Defaults to 100.
             offset (int, optional): The OFFSET clause. Defaults to 0.
             parameters (Dict[str, Any], optional): The query parameters. Defaults to None.
@@ -254,7 +254,7 @@ class TronProvider(ClickhouseProvider):
     def events(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = None,
+        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "transactionHash": True, "logIndex": True},
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
@@ -263,7 +263,7 @@ class TronProvider(ClickhouseProvider):
 
         Args:
             where (str): The WHERE clause.
-            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to None.
+            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to blockNum, transactionHash, and logIndex ascending.
             limit (int, optional): The LIMIT clause. Defaults to 100.
             offset (int, optional): The OFFSET clause. Defaults to 0.
             parameters (Dict[str, Any], optional): The query parameters. Defaults to None.
@@ -311,7 +311,7 @@ class TronProvider(ClickhouseProvider):
     def account_create_contracts(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = None,
+        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "transactionHash": True, "logIndex": True},
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
@@ -320,7 +320,7 @@ class TronProvider(ClickhouseProvider):
 
         Args:
             where (str): The WHERE clause.
-            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to None.
+            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to blockNum, transactionHash, and logIndex ascending.
             limit (int, optional): The LIMIT clause. Defaults to 100.
             offset (int, optional): The OFFSET clause. Defaults to 0.
             parameters (Dict[str, Any], optional): The query parameters. Defaults to None.
@@ -366,7 +366,7 @@ class TronProvider(ClickhouseProvider):
     def account_permission_update_contracts(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = None,
+        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "transactionHash": True, "logIndex": True},
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
@@ -375,7 +375,7 @@ class TronProvider(ClickhouseProvider):
 
         Args:
             where (str): The WHERE clause.
-            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to None.
+            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to blockNum, transactionHash, and logIndex ascending.
             limit (int, optional): The LIMIT clause. Defaults to 100.
             offset (int, optional): The OFFSET clause. Defaults to 0.
             parameters (Dict[str, Any], optional): The query parameters. Defaults to None.
@@ -421,7 +421,7 @@ class TronProvider(ClickhouseProvider):
     def account_update_contracts(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = None,
+        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "transactionHash": True, "logIndex": True},
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
@@ -430,7 +430,7 @@ class TronProvider(ClickhouseProvider):
 
         Args:
             where (str): The WHERE clause.
-            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to None.
+            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to blockNum, transactionHash, and logIndex ascending.
             limit (int, optional): The LIMIT clause. Defaults to 100.
             offset (int, optional): The OFFSET clause. Defaults to 0.
             parameters (Dict[str, Any], optional): The query parameters. Defaults to None.
@@ -476,7 +476,7 @@ class TronProvider(ClickhouseProvider):
     def asset_issue_contracts(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = None,
+        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "transactionHash": True, "logIndex": True},
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
@@ -485,7 +485,7 @@ class TronProvider(ClickhouseProvider):
 
         Args:
             where (str): The WHERE clause.
-            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to None.
+            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to blockNum, transactionHash, and logIndex ascending.
             limit (int, optional): The LIMIT clause. Defaults to 100.
             offset (int, optional): The OFFSET clause. Defaults to 0.
             parameters (Dict[str, Any], optional): The query parameters. Defaults to None.
@@ -531,7 +531,7 @@ class TronProvider(ClickhouseProvider):
     def cancel_all_unfreeze_v2_contracts(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = None,
+        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "transactionHash": True, "logIndex": True},
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
@@ -540,7 +540,7 @@ class TronProvider(ClickhouseProvider):
 
         Args:
             where (str): The WHERE clause.
-            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to None.
+            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to blockNum, transactionHash, and logIndex ascending.
             limit (int, optional): The LIMIT clause. Defaults to 100.
             offset (int, optional): The OFFSET clause. Defaults to 0.
             parameters (Dict[str, Any], optional): The query parameters. Defaults to None.
@@ -586,7 +586,7 @@ class TronProvider(ClickhouseProvider):
     def clear_abi_contracts(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = None,
+        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "transactionHash": True, "logIndex": True},
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
@@ -595,7 +595,7 @@ class TronProvider(ClickhouseProvider):
 
         Args:
             where (str): The WHERE clause.
-            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to None.
+            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to blockNum, transactionHash, and logIndex ascending.
             limit (int, optional): The LIMIT clause. Defaults to 100.
             offset (int, optional): The OFFSET clause. Defaults to 0.
             parameters (Dict[str, Any], optional): The query parameters. Defaults to None.
@@ -641,7 +641,7 @@ class TronProvider(ClickhouseProvider):
     def create_smart_contracts(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = None,
+        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "transactionHash": True, "logIndex": True},
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
@@ -650,7 +650,7 @@ class TronProvider(ClickhouseProvider):
 
         Args:
             where (str): The WHERE clause.
-            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to None.
+            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to blockNum, transactionHash, and logIndex ascending.
             limit (int, optional): The LIMIT clause. Defaults to 100.
             offset (int, optional): The OFFSET clause. Defaults to 0.
             parameters (Dict[str, Any], optional): The query parameters. Defaults to None.
@@ -696,7 +696,7 @@ class TronProvider(ClickhouseProvider):
     def delegate_resource_contracts(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = None,
+        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "transactionHash": True, "logIndex": True},
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
@@ -705,7 +705,7 @@ class TronProvider(ClickhouseProvider):
 
         Args:
             where (str): The WHERE clause.
-            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to None.
+            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to blockNum, transactionHash, and logIndex ascending.
             limit (int, optional): The LIMIT clause. Defaults to 100.
             offset (int, optional): The OFFSET clause. Defaults to 0.
             parameters (Dict[str, Any], optional): The query parameters. Defaults to None.
@@ -751,7 +751,7 @@ class TronProvider(ClickhouseProvider):
     def exchange_create_contracts(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = None,
+        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "transactionHash": True, "logIndex": True},
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
@@ -760,7 +760,7 @@ class TronProvider(ClickhouseProvider):
 
         Args:
             where (str): The WHERE clause.
-            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to None.
+            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to blockNum, transactionHash, and logIndex ascending.
             limit (int, optional): The LIMIT clause. Defaults to 100.
             offset (int, optional): The OFFSET clause. Defaults to 0.
             parameters (Dict[str, Any], optional): The query parameters. Defaults to None.
@@ -806,7 +806,7 @@ class TronProvider(ClickhouseProvider):
     def exchange_inject_contracts(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = None,
+        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "transactionHash": True, "logIndex": True},
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
@@ -815,7 +815,7 @@ class TronProvider(ClickhouseProvider):
 
         Args:
             where (str): The WHERE clause.
-            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to None.
+            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to blockNum, transactionHash, and logIndex ascending.
             limit (int, optional): The LIMIT clause. Defaults to 100.
             offset (int, optional): The OFFSET clause. Defaults to 0.
             parameters (Dict[str, Any], optional): The query parameters. Defaults to None.
@@ -861,7 +861,7 @@ class TronProvider(ClickhouseProvider):
     def exchange_transaction_contracts(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = None,
+        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "transactionHash": True, "logIndex": True},
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
@@ -870,7 +870,7 @@ class TronProvider(ClickhouseProvider):
 
         Args:
             where (str): The WHERE clause.
-            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to None.
+            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to blockNum, transactionHash, and logIndex ascending.
             limit (int, optional): The LIMIT clause. Defaults to 100.
             offset (int, optional): The OFFSET clause. Defaults to 0.
             parameters (Dict[str, Any], optional): The query parameters. Defaults to None.
@@ -916,7 +916,7 @@ class TronProvider(ClickhouseProvider):
     def exchange_withdraw_contracts(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = None,
+        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "transactionHash": True, "logIndex": True},
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
@@ -925,7 +925,7 @@ class TronProvider(ClickhouseProvider):
 
         Args:
             where (str): The WHERE clause.
-            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to None.
+            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to blockNum, transactionHash, and logIndex ascending.
             limit (int, optional): The LIMIT clause. Defaults to 100.
             offset (int, optional): The OFFSET clause. Defaults to 0.
             parameters (Dict[str, Any], optional): The query parameters. Defaults to None.
@@ -971,7 +971,7 @@ class TronProvider(ClickhouseProvider):
     def freeze_balance_contracts(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = None,
+        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "transactionHash": True, "logIndex": True},
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
@@ -980,7 +980,7 @@ class TronProvider(ClickhouseProvider):
 
         Args:
             where (str): The WHERE clause.
-            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to None.
+            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to blockNum, transactionHash, and logIndex ascending.
             limit (int, optional): The LIMIT clause. Defaults to 100.
             offset (int, optional): The OFFSET clause. Defaults to 0.
             parameters (Dict[str, Any], optional): The query parameters. Defaults to None.
@@ -1026,7 +1026,7 @@ class TronProvider(ClickhouseProvider):
     def freeze_balance_v2_contracts(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = None,
+        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "transactionHash": True, "logIndex": True},
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
@@ -1035,7 +1035,7 @@ class TronProvider(ClickhouseProvider):
 
         Args:
             where (str): The WHERE clause.
-            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to None.
+            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to blockNum, transactionHash, and logIndex ascending.
             limit (int, optional): The LIMIT clause. Defaults to 100.
             offset (int, optional): The OFFSET clause. Defaults to 0.
             parameters (Dict[str, Any], optional): The query parameters. Defaults to None.
@@ -1081,7 +1081,7 @@ class TronProvider(ClickhouseProvider):
     def market_cancel_order_contracts(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = None,
+        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "transactionHash": True, "logIndex": True},
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
@@ -1090,7 +1090,7 @@ class TronProvider(ClickhouseProvider):
 
         Args:
             where (str): The WHERE clause.
-            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to None.
+            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to blockNum, transactionHash, and logIndex ascending.
             limit (int, optional): The LIMIT clause. Defaults to 100.
             offset (int, optional): The OFFSET clause. Defaults to 0.
             parameters (Dict[str, Any], optional): The query parameters. Defaults to None.
@@ -1136,7 +1136,7 @@ class TronProvider(ClickhouseProvider):
     def market_sell_asset_contracts(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = None,
+        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "transactionHash": True, "logIndex": True},
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
@@ -1145,7 +1145,7 @@ class TronProvider(ClickhouseProvider):
 
         Args:
             where (str): The WHERE clause.
-            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to None.
+            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to blockNum, transactionHash, and logIndex ascending.
             limit (int, optional): The LIMIT clause. Defaults to 100.
             offset (int, optional): The OFFSET clause. Defaults to 0.
             parameters (Dict[str, Any], optional): The query parameters. Defaults to None.
@@ -1191,7 +1191,7 @@ class TronProvider(ClickhouseProvider):
     def participate_asset_issue_contracts(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = None,
+        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "transactionHash": True, "logIndex": True},
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
@@ -1200,7 +1200,7 @@ class TronProvider(ClickhouseProvider):
 
         Args:
             where (str): The WHERE clause.
-            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to None.
+            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to blockNum, transactionHash, and logIndex ascending.
             limit (int, optional): The LIMIT clause. Defaults to 100.
             offset (int, optional): The OFFSET clause. Defaults to 0.
             parameters (Dict[str, Any], optional): The query parameters. Defaults to None.
@@ -1246,7 +1246,7 @@ class TronProvider(ClickhouseProvider):
     def proposal_approve_contracts(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = None,
+        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "transactionHash": True, "logIndex": True},
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
@@ -1255,7 +1255,7 @@ class TronProvider(ClickhouseProvider):
 
         Args:
             where (str): The WHERE clause.
-            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to None.
+            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to blockNum, transactionHash, and logIndex ascending.
             limit (int, optional): The LIMIT clause. Defaults to 100.
             offset (int, optional): The OFFSET clause. Defaults to 0.
             parameters (Dict[str, Any], optional): The query parameters. Defaults to None.
@@ -1301,7 +1301,7 @@ class TronProvider(ClickhouseProvider):
     def proposal_create_contracts(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = None,
+        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "transactionHash": True, "logIndex": True},
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
@@ -1310,7 +1310,7 @@ class TronProvider(ClickhouseProvider):
 
         Args:
             where (str): The WHERE clause.
-            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to None.
+            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to blockNum, transactionHash, and logIndex ascending.
             limit (int, optional): The LIMIT clause. Defaults to 100.
             offset (int, optional): The OFFSET clause. Defaults to 0.
             parameters (Dict[str, Any], optional): The query parameters. Defaults to None.
@@ -1356,7 +1356,7 @@ class TronProvider(ClickhouseProvider):
     def proposal_delete_contracts(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = None,
+        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "transactionHash": True, "logIndex": True},
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
@@ -1365,7 +1365,7 @@ class TronProvider(ClickhouseProvider):
 
         Args:
             where (str): The WHERE clause.
-            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to None.
+            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to blockNum, transactionHash, and logIndex ascending.
             limit (int, optional): The LIMIT clause. Defaults to 100.
             offset (int, optional): The OFFSET clause. Defaults to 0.
             parameters (Dict[str, Any], optional): The query parameters. Defaults to None.
@@ -1411,7 +1411,7 @@ class TronProvider(ClickhouseProvider):
     def set_account_id_contracts(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = None,
+        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "transactionHash": True, "logIndex": True},
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
@@ -1420,7 +1420,7 @@ class TronProvider(ClickhouseProvider):
 
         Args:
             where (str): The WHERE clause.
-            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to None.
+            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to blockNum, transactionHash, and logIndex ascending.
             limit (int, optional): The LIMIT clause. Defaults to 100.
             offset (int, optional): The OFFSET clause. Defaults to 0.
             parameters (Dict[str, Any], optional): The query parameters. Defaults to None.
@@ -1466,7 +1466,7 @@ class TronProvider(ClickhouseProvider):
     def shielded_transfer_contracts(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = None,
+        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "transactionHash": True, "logIndex": True},
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
@@ -1475,7 +1475,7 @@ class TronProvider(ClickhouseProvider):
 
         Args:
             where (str): The WHERE clause.
-            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to None.
+            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to blockNum, transactionHash, and logIndex ascending.
             limit (int, optional): The LIMIT clause. Defaults to 100.
             offset (int, optional): The OFFSET clause. Defaults to 0.
             parameters (Dict[str, Any], optional): The query parameters. Defaults to None.
@@ -1521,7 +1521,7 @@ class TronProvider(ClickhouseProvider):
     def transfer_asset_contracts(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = None,
+        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "transactionHash": True, "logIndex": True},
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
@@ -1530,7 +1530,7 @@ class TronProvider(ClickhouseProvider):
 
         Args:
             where (str): The WHERE clause.
-            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to None.
+            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to blockNum, transactionHash, and logIndex ascending.
             limit (int, optional): The LIMIT clause. Defaults to 100.
             offset (int, optional): The OFFSET clause. Defaults to 0.
             parameters (Dict[str, Any], optional): The query parameters. Defaults to None.
@@ -1576,7 +1576,7 @@ class TronProvider(ClickhouseProvider):
     def transfer_contracts(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = None,
+        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "transactionHash": True, "logIndex": True},
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
@@ -1585,7 +1585,7 @@ class TronProvider(ClickhouseProvider):
 
         Args:
             where (str): The WHERE clause.
-            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to None.
+            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to blockNum, transactionHash, and logIndex ascending.
             limit (int, optional): The LIMIT clause. Defaults to 100.
             offset (int, optional): The OFFSET clause. Defaults to 0.
             parameters (Dict[str, Any], optional): The query parameters. Defaults to None.
@@ -1631,7 +1631,7 @@ class TronProvider(ClickhouseProvider):
     def trigger_smart_contracts(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = None,
+        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "transactionHash": True, "logIndex": True},
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
@@ -1640,7 +1640,7 @@ class TronProvider(ClickhouseProvider):
 
         Args:
             where (str): The WHERE clause.
-            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to None.
+            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to blockNum, transactionHash, and logIndex ascending.
             limit (int, optional): The LIMIT clause. Defaults to 100.
             offset (int, optional): The OFFSET clause. Defaults to 0.
             parameters (Dict[str, Any], optional): The query parameters. Defaults to None.
@@ -1686,7 +1686,7 @@ class TronProvider(ClickhouseProvider):
     def undelegate_resource_contracts(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = None,
+        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "transactionHash": True, "logIndex": True},
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
@@ -1695,7 +1695,7 @@ class TronProvider(ClickhouseProvider):
 
         Args:
             where (str): The WHERE clause.
-            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to None.
+            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to blockNum, transactionHash, and logIndex ascending.
             limit (int, optional): The LIMIT clause. Defaults to 100.
             offset (int, optional): The OFFSET clause. Defaults to 0.
             parameters (Dict[str, Any], optional): The query parameters. Defaults to None.
@@ -1741,7 +1741,7 @@ class TronProvider(ClickhouseProvider):
     def unfreeze_asset_contracts(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = None,
+        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "transactionHash": True, "logIndex": True},
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
@@ -1750,7 +1750,7 @@ class TronProvider(ClickhouseProvider):
 
         Args:
             where (str): The WHERE clause.
-            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to None.
+            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to blockNum, transactionHash, and logIndex ascending.
             limit (int, optional): The LIMIT clause. Defaults to 100.
             offset (int, optional): The OFFSET clause. Defaults to 0.
             parameters (Dict[str, Any], optional): The query parameters. Defaults to None.
@@ -1796,7 +1796,7 @@ class TronProvider(ClickhouseProvider):
     def unfreeze_balance_contracts(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = None,
+        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "transactionHash": True, "logIndex": True},
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
@@ -1805,7 +1805,7 @@ class TronProvider(ClickhouseProvider):
 
         Args:
             where (str): The WHERE clause.
-            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to None.
+            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to blockNum, transactionHash, and logIndex ascending.
             limit (int, optional): The LIMIT clause. Defaults to 100.
             offset (int, optional): The OFFSET clause. Defaults to 0.
             parameters (Dict[str, Any], optional): The query parameters. Defaults to None.
@@ -1851,7 +1851,7 @@ class TronProvider(ClickhouseProvider):
     def unfreeze_balance_v2_contracts(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = None,
+        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "transactionHash": True, "logIndex": True},
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
@@ -1860,7 +1860,7 @@ class TronProvider(ClickhouseProvider):
 
         Args:
             where (str): The WHERE clause.
-            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to None.
+            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to blockNum, transactionHash, and logIndex ascending.
             limit (int, optional): The LIMIT clause. Defaults to 100.
             offset (int, optional): The OFFSET clause. Defaults to 0.
             parameters (Dict[str, Any], optional): The query parameters. Defaults to None.
@@ -1906,7 +1906,7 @@ class TronProvider(ClickhouseProvider):
     def update_asset_contracts(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = None,
+        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "transactionHash": True, "logIndex": True},
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
@@ -1915,7 +1915,7 @@ class TronProvider(ClickhouseProvider):
 
         Args:
             where (str): The WHERE clause.
-            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to None.
+            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to blockNum, transactionHash, and logIndex ascending.
             limit (int, optional): The LIMIT clause. Defaults to 100.
             offset (int, optional): The OFFSET clause. Defaults to 0.
             parameters (Dict[str, Any], optional): The query parameters. Defaults to None.
@@ -1961,7 +1961,7 @@ class TronProvider(ClickhouseProvider):
     def update_brokerage_contracts(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = None,
+        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "transactionHash": True, "logIndex": True},
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
@@ -1970,7 +1970,7 @@ class TronProvider(ClickhouseProvider):
 
         Args:
             where (str): The WHERE clause.
-            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to None.
+            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to blockNum, transactionHash, and logIndex ascending.
             limit (int, optional): The LIMIT clause. Defaults to 100.
             offset (int, optional): The OFFSET clause. Defaults to 0.
             parameters (Dict[str, Any], optional): The query parameters. Defaults to None.
@@ -2016,7 +2016,7 @@ class TronProvider(ClickhouseProvider):
     def update_energy_limit_contracts(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = None,
+        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "transactionHash": True, "logIndex": True},
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
@@ -2025,7 +2025,7 @@ class TronProvider(ClickhouseProvider):
 
         Args:
             where (str): The WHERE clause.
-            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to None.
+            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to blockNum, transactionHash, and logIndex ascending.
             limit (int, optional): The LIMIT clause. Defaults to 100.
             offset (int, optional): The OFFSET clause. Defaults to 0.
             parameters (Dict[str, Any], optional): The query parameters. Defaults to None.
@@ -2071,7 +2071,7 @@ class TronProvider(ClickhouseProvider):
     def update_setting_contracts(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = None,
+        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "transactionHash": True, "logIndex": True},
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
@@ -2080,7 +2080,7 @@ class TronProvider(ClickhouseProvider):
 
         Args:
             where (str): The WHERE clause.
-            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to None.
+            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to blockNum, transactionHash, and logIndex ascending.
             limit (int, optional): The LIMIT clause. Defaults to 100.
             offset (int, optional): The OFFSET clause. Defaults to 0.
             parameters (Dict[str, Any], optional): The query parameters. Defaults to None.
@@ -2126,7 +2126,7 @@ class TronProvider(ClickhouseProvider):
     def vote_asset_contracts(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = None,
+        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "transactionHash": True, "logIndex": True},
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
@@ -2135,7 +2135,7 @@ class TronProvider(ClickhouseProvider):
 
         Args:
             where (str): The WHERE clause.
-            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to None.
+            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to blockNum, transactionHash, and logIndex ascending.
             limit (int, optional): The LIMIT clause. Defaults to 100.
             offset (int, optional): The OFFSET clause. Defaults to 0.
             parameters (Dict[str, Any], optional): The query parameters. Defaults to None.
@@ -2181,7 +2181,7 @@ class TronProvider(ClickhouseProvider):
     def vote_witness_contracts(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = None,
+        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "transactionHash": True, "logIndex": True},
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
@@ -2190,7 +2190,7 @@ class TronProvider(ClickhouseProvider):
 
         Args:
             where (str): The WHERE clause.
-            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to None.
+            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to blockNum, transactionHash, and logIndex ascending.
             limit (int, optional): The LIMIT clause. Defaults to 100.
             offset (int, optional): The OFFSET clause. Defaults to 0.
             parameters (Dict[str, Any], optional): The query parameters. Defaults to None.
@@ -2236,7 +2236,7 @@ class TronProvider(ClickhouseProvider):
     def withdraw_balance_contracts(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = None,
+        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "transactionHash": True, "logIndex": True},
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
@@ -2245,7 +2245,7 @@ class TronProvider(ClickhouseProvider):
 
         Args:
             where (str): The WHERE clause.
-            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to None.
+            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to blockNum, transactionHash, and logIndex ascending.
             limit (int, optional): The LIMIT clause. Defaults to 100.
             offset (int, optional): The OFFSET clause. Defaults to 0.
             parameters (Dict[str, Any], optional): The query parameters. Defaults to None.
@@ -2291,7 +2291,7 @@ class TronProvider(ClickhouseProvider):
     def withdraw_expire_unfreeze_contracts(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = None,
+        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "transactionHash": True, "logIndex": True},
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
@@ -2300,7 +2300,7 @@ class TronProvider(ClickhouseProvider):
 
         Args:
             where (str): The WHERE clause.
-            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to None.
+            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to blockNum, transactionHash, and logIndex ascending.
             limit (int, optional): The LIMIT clause. Defaults to 100.
             offset (int, optional): The OFFSET clause. Defaults to 0.
             parameters (Dict[str, Any], optional): The query parameters. Defaults to None.
@@ -2346,7 +2346,7 @@ class TronProvider(ClickhouseProvider):
     def witness_create_contracts(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = None,
+        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "transactionHash": True, "logIndex": True},
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
@@ -2355,7 +2355,7 @@ class TronProvider(ClickhouseProvider):
 
         Args:
             where (str): The WHERE clause.
-            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to None.
+            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to blockNum, transactionHash, and logIndex ascending.
             limit (int, optional): The LIMIT clause. Defaults to 100.
             offset (int, optional): The OFFSET clause. Defaults to 0.
             parameters (Dict[str, Any], optional): The query parameters. Defaults to None.
@@ -2401,7 +2401,7 @@ class TronProvider(ClickhouseProvider):
     def witness_update_contracts(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = None,
+        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "transactionHash": True, "logIndex": True},
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
@@ -2410,7 +2410,7 @@ class TronProvider(ClickhouseProvider):
 
         Args:
             where (str): The WHERE clause.
-            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to None.
+            order_by (Dict[str, bool], optional): The ORDER BY clause. Defaults to blockNum, transactionHash, and logIndex ascending.
             limit (int, optional): The LIMIT clause. Defaults to 100.
             offset (int, optional): The OFFSET clause. Defaults to 0.
             parameters (Dict[str, Any], optional): The query parameters. Defaults to None.
