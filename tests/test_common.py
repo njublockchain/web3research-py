@@ -1,8 +1,8 @@
-import unittest
+import pytest
 from web3research.common.types import Address, ChainStyle
 
 
-class TestCommon(unittest.TestCase):
+class TestCommon(pytest.TestCase):
     def __init__(self, methodName: str = "runTest") -> None:
         super().__init__(methodName)
 
@@ -18,4 +18,4 @@ class TestCommon(unittest.TestCase):
         print(USDT_ETHAddr.addr_hex)
         print(USDT_ETHAddr.string(ChainStyle.ETH))
 if __name__ == "__main__":
-    unittest.main()
+    pytest.main()

@@ -1,19 +1,22 @@
 import os
-import json
-import unittest
-import web3research
 import web3
+import json
+import pytest
+import web3research
+
 from web3research.evm import SingleEventDecoder, ContractDecoder
 from web3research.common.types import Address
 
 
-class TestTron(unittest.TestCase):
+class TestTron(pytest.TestCase):
     def __init__(self, methodName: str = "runTest") -> None:
         super().__init__(methodName)
-        print("API Token: \t", os.environ["W3R_API_TOKEN"])
-        print("Backend: \t", os.environ["W3R_BACKEND"])
-        self._w3r = web3research.Web3Research(api_token=os.environ["W3R_API_TOKEN"])
-        self._w3r_tron = self._w3r.tron(backend=os.environ["W3R_BACKEND"])
+        api_token = os.environ.get("W3R_API_TOKEN", "default")
+        backend = os.environ.get("W3R_BACKEND", "http://localhost:8123")
+        print("API Token: \t", api_token)
+        print("Backend: \t", backend)
+        self._w3r = web3research.Web3Research(api_token=api_token)
+        self._w3r_tron = self._w3r.tron(backend=backend)
 
     def test_blocks(self):
         print(json.dumps(list(self._w3r_tron.blocks("number > 10000000", limit=5))))
@@ -58,4 +61,4 @@ class TestTron(unittest.TestCase):
         self._w3r_tron.transfer_contracts(f"toAddress={USDT_TAddr}", limit=5)
         
 if __name__ == "__main__":
-    unittest.main()
+    pytest.main()

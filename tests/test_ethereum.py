@@ -1,33 +1,35 @@
 import os
-import unittest
-import web3research
 import web3
+import json
+import pytest
+import web3research
+
 from web3research.evm import SingleEventDecoder, ContractDecoder
 from web3research.common.types import Address
 
 
-class TestEthereum(unittest.TestCase):
+class TestEthereum(pytest.TestCase):
     def __init__(self, methodName: str = "runTest") -> None:
         super().__init__(methodName)
-        print("API Token: \t", os.environ["W3R_API_TOKEN"])
-        print("Backend: \t", os.environ["W3R_BACKEND"])
-        self._w3r = web3research.Web3Research(api_token=os.environ["W3R_API_TOKEN"])
-        self._w3r_eth = self._w3r.eth(backend=os.environ["W3R_BACKEND"])
+        api_token = os.environ.get("W3R_API_TOKEN", "default")
+        backend = os.environ.get("W3R_BACKEND", "http://localhost:8123")
+        print("API Token: \t", api_token)
+        print("Backend: \t", backend)
+        self._w3r = web3research.Web3Research(api_token=api_token)
+        self._w3r_eth = self._w3r.eth(backend=backend)
 
     def test_blocks(self):
         import json
+
         print(json.dumps(list(self._w3r_eth.blocks("number > 10000000", limit=5))))
 
     def test_flood(self):
-        import json
         json.dumps(list(self._w3r_eth.blocks("number > 10000000", limit=5_000_000)))
 
     def test_events(self):
-        import json
         print(json.dumps(list(self._w3r_eth.events("", limit=5))))
 
     def test_transactions(self):
-        import json
         print(json.dumps(list(self._w3r_eth.transactions("", limit=5))))
 
     def test_single_decode(self):
@@ -71,10 +73,10 @@ class TestEthereum(unittest.TestCase):
 
         abi = json.loads(TEST_ABI)
         decoder = ContractDecoder(w3, contract_abi=abi)
-        result = decoder.decode_event_log(event_name="Transfer", log=log)
+        result = decoder.decode_event_log(event_name="Transfer", event_log=log)
 
         print(result)
 
 
 if __name__ == "__main__":
-    unittest.main()
+    pytest.main()

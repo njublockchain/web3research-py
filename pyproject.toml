@@ -17,6 +17,7 @@ classifiers = [
   "Operating System :: OS Independent",
 ]
 keywords = ["web3", "web3research", "blockchain", "ethereum", "tron", "web3.py"]
+exclude = ["tests", "**/*_test.py", "**/test_*.py"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
@@ -26,6 +27,9 @@ base58 = "^2.1.1"
 
 [tool.poetry.urls]
 "Bug Tracker" = "https://github.com/njublockchain/web3research-py/issues"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.4"
 
 [build-system]
 requires = ["poetry-core"]
