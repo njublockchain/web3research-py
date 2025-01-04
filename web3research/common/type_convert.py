@@ -42,30 +42,30 @@ def convert_bytes_to_hex_generator(
             elif isinstance(value, dict):
                 for k, v in value.items():
                     if isinstance(v, bytes):
-                        value[k] = convert_bytes_to_hex(style=style, raw=value)
+                        value[k] = convert_bytes_to_hex(style=style, raw=v)
                 item[key] = value
             elif isinstance(value, list):
                 for i, v in enumerate(value):
                     if isinstance(v, bytes):
-                        value[i] = convert_bytes_to_hex(style=style, raw=value)
+                        value[i] = convert_bytes_to_hex(style=style, raw=v)
                 item[key] = value
             elif isinstance(value, tuple):
                 value = list(value)
                 for i, v in enumerate(value):
                     if isinstance(v, bytes):
-                        value[i] = convert_bytes_to_hex(style=style, raw=value)
+                        value[i] = convert_bytes_to_hex(style=style, raw=v)
                 item[key] = tuple(value)
             elif isinstance(value, set):
                 value = list(value)
                 for i, v in enumerate(value):
                     if isinstance(v, bytes):
-                        value[i] = convert_bytes_to_hex(style=style, raw=value)
+                        value[i] = convert_bytes_to_hex(style=style, raw=v)
                 item[key] = set(value)
             elif isinstance(value, frozenset):
                 value = list(value)
                 for i, v in enumerate(value):
                     if isinstance(v, bytes):
-                        value[i] = convert_bytes_to_hex(style=style, raw=value)
+                        value[i] = convert_bytes_to_hex(style=style, raw=v)
                 item[key] = frozenset(value)
 
         yield item
