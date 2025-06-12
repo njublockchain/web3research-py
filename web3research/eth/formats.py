@@ -1,104 +1,107 @@
 ETHEREUM_BLOCK_COLUMN_FORMATS: dict[str, str | dict[str, str]] | None = {
-    "hash": "bytes",
+    "hash": "str",  # FixedString(66) - 0x prefixed hex string
     "number": "int",
-    "parentHash": "bytes",
-    "uncles": "bytes",
-    "sha3Uncles": "bytes",
+    "parentHash": "str",  # FixedString(66) - 0x prefixed hex string
+    "uncles": "list[str]",  # Array(FixedString(66)) - list of 0x prefixed hex strings
     "totalDifficulty": "int",
-    "miner": "bytes",
+    "miner": "str",  # String - 0x prefixed address
     "difficulty": "int",
-    "nonce": "bytes",
-    "mixHash": "bytes",
+    "nonce": "str",  # String - 0x prefixed hex
     "baseFeePerGas": "int",
     "gasLimit": "int",
     "gasUsed": "int",
-    "stateRoot": "bytes",
-    "transactionsRoot": "bytes",
-    "receiptsRoot": "bytes",
-    "logsBloom": "bytes",
-    "withdrawlsRoot": "bytes",
-    "extraData": "bytes",
+    "extraData": "str",  # String - 0x prefixed hex
     "timestamp": "int",
     "size": "int",
 }
 
 ETHEREUM_TRANSACTION_COLUMN_FORMATS: dict[str, str | dict[str, str]] | None = {
-    "hash": "bytes",
-    "blockHash": "bytes",
+    "hash": "str",  # FixedString(66) - 0x prefixed hex string
     "blockNumber": "int",
     "blockTimestamp": "int",
     "transactionIndex": "int",
     "chainId": "int",
     "type": "int",
-    "from": "bytes",
-    "to": "bytes",
+    "from": "str",  # String - 0x prefixed address
+    "to": "str",  # Nullable(String) - 0x prefixed address
     "value": "int",
     "nonce": "int",
-    "input": "bytes",
+    "input": "str",  # String CODEC(ZSTD(6)) - 0x prefixed hex
     "gas": "int",
     "gasPrice": "int",
     "maxFeePerGas": "int",
     "maxPriorityFeePerGas": "int",
-    "r": "int",
-    "s": "int",
-    "v": "int",
-    "accessList": "str",
-    "contractAddress": "bytes",
+    "contractAddress": "str",  # Nullable(String) - 0x prefixed address
     "cumulativeGasUsed": "int",
     "effectiveGasPrice": "int",
     "gasUsed": "int",
-    "logsBloom": "bytes",
-    "root": "bytes",
     "status": "int",
 }
 
 ETHEREUM_TRACE_COLUMN_FORMATS: dict[str, str | dict[str, str]] | None = {
-    "blockPos": "int",
+    "blockPosition": "int",
     "blockNumber": "int",
     "blockTimestamp": "int",
-    "blockHash": "bytes",
-    "transactionHash": "bytes",
-    # "traceAddress": "list[int]",
+    "transactionHash": "str",  # Nullable(FixedString(66)) - 0x prefixed hex string
+    "traceAddress": "list[int]",  # Array(UInt64)
     "subtraces": "int",
     "transactionPosition": "int",
-    "error": "bytes",
-    "actionType": "bytes",
-    "actionCallFrom": "bytes",
-    "actionCallTo": "bytes",
+    "error": "str",  # Nullable(String) CODEC(ZSTD(6))
+    "actionType": "str",  # LowCardinality(String)
+    "actionCallFrom": "str",  # Nullable(String) - 0x prefixed address
+    "actionCallTo": "str",  # Nullable(String) - 0x prefixed address
     "actionCallValue": "int",
-    "actionCallInput": "bytes",
+    "actionCallInput": "str",  # Nullable(String) CODEC(ZSTD(6)) - 0x prefixed hex
     "actionCallGas": "int",
-    "actionCallType": "bytes",
-    "actionCreateFrom": "bytes",
+    "actionCallType": "str",  # LowCardinality(String)
+    "actionCreateFrom": "str",  # Nullable(String) - 0x prefixed address
     "actionCreateValue": "int",
-    "actionCreateInit": "bytes",
+    "actionCreateInit": "str",  # Nullable(String) CODEC(ZSTD(6)) - 0x prefixed hex
     "actionCreateGas": "int",
-    "actionSuicideAddress": "bytes",
-    "actionSuicideRefundAddress": "bytes",
+    "actionSuicideAddress": "str",  # Nullable(String) - 0x prefixed address
+    "actionSuicideRefundAddress": "str",  # Nullable(String) - 0x prefixed address
     "actionSuicideBalance": "int",
-    "actionRewardAuthor": "bytes",
+    "actionRewardAuthor": "str",  # Nullable(String) - 0x prefixed address
     "actionRewardValue": "int",
-    "actionRewardType": "bytes",
-    "resultType": "bytes",
+    "actionRewardType": "str",  # LowCardinality(String)
+    "resultType": "str",  # LowCardinality(String)
     "resultCallGasUsed": "int",
-    "resultCallOutput": "bytes",
+    "resultCallOutput": "str",  # Nullable(String) CODEC(ZSTD(6)) - 0x prefixed hex
     "resultCreateGasUsed": "int",
-    "resultCreateCode": "bytes",
-    "resultCreateAddress": "bytes",
+    "resultCreateCode": "str",  # Nullable(String) CODEC(ZSTD(6)) - 0x prefixed hex
+    "resultCreateAddress": "str",  # Nullable(String) - 0x prefixed address
 }
 
 ETHEREUM_EVENT_COLUMN_FORMATS: dict[str, str | dict[str, str]] | None = {
-    "address": "bytes",
-    "blockHash": "bytes",
     "blockNumber": "int",
     "blockTimestamp": "int",
-    "transactionHash": "bytes",
+    "transactionHash": "str",  # FixedString(66) - 0x prefixed hex string
     "transactionIndex": "int",
     "logIndex": "int",
     "removed": "bool",
-    "topic0": "bytes",
-    "topic1": "bytes",
-    "topic2": "bytes",
-    "topic3": "bytes",
-    "data": "bytes",
+    "address": "str",  # String - 0x prefixed address
+    "topic0": "str",  # Nullable(FixedString(66)) - 0x prefixed hex string
+    "topic1": "str",  # Nullable(FixedString(66)) - 0x prefixed hex string
+    "topic2": "str",  # Nullable(FixedString(66)) - 0x prefixed hex string
+    "topic3": "str",  # Nullable(FixedString(66)) - 0x prefixed hex string
+    "data": "str",  # String CODEC(ZSTD(6)) - 0x prefixed hex string
+}
+
+ETHEREUM_ACCESS_LIST_ITEM_COLUMN_FORMATS: dict[str, str | dict[str, str]] | None = {
+    "blockNumber": "int",
+    "blockTimestamp": "int",
+    "transactionIndex": "int",
+    "transactionHash": "str",  # FixedString(66) - 0x prefixed hex string
+    "itemIndex": "int",
+    "address": "str",  # String - 0x prefixed address
+    "storageKey": "list[str]",  # Array(FixedString(66)) - list of 0x prefixed hex strings
+}
+
+ETHEREUM_WITHDRAWAL_COLUMN_FORMATS: dict[str, str | dict[str, str]] | None = {
+    "blockNumber": "int",
+    "blockTimestamp": "int",
+    "index": "int",
+    "validatorIndex": "int",
+    "address": "str",  # String - 0x prefixed address
+    "amount": "int",
 }
