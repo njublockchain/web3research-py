@@ -1,14 +1,12 @@
 import web3
-import pytest
 
 from web3research.common.types import ChainStyle
 from web3research.evm.abi import ERC20_ABI
 from web3research.evm.decoder import ContractDecoder
 
 
-class TestContractDecoder(pytest.TestCase):
-    def __init__(self, methodName: str = "runTest") -> None:
-        super().__init__(methodName)
+class TestContractDecoder:
+    def __init__(self) -> None:
         self.w3 = web3.Web3()
         self.ABI = ERC20_ABI
         self.decoder = ContractDecoder(self.w3, contract_abi=self.ABI)

@@ -1,16 +1,14 @@
 import os
 import web3
 import json
-import pytest
 import web3research
 
 from web3research.evm import SingleEventDecoder, ContractDecoder
 from web3research.common.types import Address
 
 
-class TestEthereum(pytest.TestCase):
-    def __init__(self, methodName: str = "runTest") -> None:
-        super().__init__(methodName)
+class TestEthereum:
+    def __init__(self) -> None:
         api_token = os.environ.get("W3R_API_TOKEN", "default")
         backend = os.environ.get("W3R_BACKEND", "http://localhost:8123")
         print("API Token: \t", api_token)
@@ -76,7 +74,3 @@ class TestEthereum(pytest.TestCase):
         result = decoder.decode_event_log(event_name="Transfer", event_log=log)
 
         print(result)
-
-
-if __name__ == "__main__":
-    pytest.main()

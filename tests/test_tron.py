@@ -1,16 +1,14 @@
 import os
 import web3
 import json
-import pytest
 import web3research
 
 from web3research.evm import SingleEventDecoder, ContractDecoder
 from web3research.common.types import Address
 
 
-class TestTron(pytest.TestCase):
-    def __init__(self, methodName: str = "runTest") -> None:
-        super().__init__(methodName)
+class TestTron:
+    def __init__(self) -> None:
         api_token = os.environ.get("W3R_API_TOKEN", "default")
         backend = os.environ.get("W3R_BACKEND", "http://localhost:8123")
         print("API Token: \t", api_token)
@@ -59,6 +57,3 @@ class TestTron(pytest.TestCase):
         USDT_TAddr = Address("TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t")
         print(USDT_TAddr.addr_hex)
         self._w3r_tron.transfer_contracts(f"toAddress={USDT_TAddr}", limit=5)
-        
-if __name__ == "__main__":
-    pytest.main()
