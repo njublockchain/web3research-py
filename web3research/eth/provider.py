@@ -1,15 +1,15 @@
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Generator, Optional
 from web3research.common.types import ChainStyle
 from web3research.db import ClickhouseProvider
 from web3research.common.type_convert import (
-    convert_bytes_to_hex_generator,
-    group_events_generator,
+    group_event_topics,
 )
 from web3research.eth.formats import (
     ETHEREUM_BLOCK_COLUMN_FORMATS,
     ETHEREUM_EVENT_COLUMN_FORMATS,
     ETHEREUM_TRACE_COLUMN_FORMATS,
     ETHEREUM_TRANSACTION_COLUMN_FORMATS,
+    QUERY_FORMATS,
 )
 
 
@@ -54,7 +54,7 @@ class EthereumProvider(ClickhouseProvider):
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
-    ):
+    ) -> Generator[Dict[str, Any], None, None]:
         """Get blocks from the database.
 
         Args:
@@ -93,14 +93,14 @@ class EthereumProvider(ClickhouseProvider):
         rows_stream = self.query_rows_stream(
             q,
             column_formats=ETHEREUM_BLOCK_COLUMN_FORMATS,  # avoid auto convert string to bytes
+            query_formats=QUERY_FORMATS,
             parameters={**(parameters or {})},
         )
+        column_names: list[str] = rows_stream.source.column_names  # type: ignore
 
         with rows_stream:
-            named_results = [
-                dict(zip(rows_stream.source.column_names, row)) for row in rows_stream
-            ]
-            return convert_bytes_to_hex_generator(ChainStyle.ETH, named_results)
+            for row in rows_stream:
+                yield dict(zip(column_names, row))
 
     def transactions(
         self,
@@ -112,7 +112,7 @@ class EthereumProvider(ClickhouseProvider):
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
-    ):
+    ) -> Generator[Dict[str, Any], None, None]:
         """Get transactions from the database.
 
         Args:
@@ -151,16 +151,16 @@ class EthereumProvider(ClickhouseProvider):
         rows_stream = self.query_rows_stream(
             q,
             column_formats=ETHEREUM_TRANSACTION_COLUMN_FORMATS,
+            query_formats=QUERY_FORMATS,
             parameters={
                 **(parameters or {}),
             },
         )
+        column_names: list[str] = rows_stream.source.column_names  # type: ignore
 
         with rows_stream:
-            named_results = [
-                dict(zip(rows_stream.source.column_names, row)) for row in rows_stream
-            ]
-            return convert_bytes_to_hex_generator(ChainStyle.ETH, named_results)
+            for row in rows_stream:
+                yield dict(zip(column_names, row))
 
     def traces(
         self,
@@ -169,7 +169,7 @@ class EthereumProvider(ClickhouseProvider):
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
-    ):
+    ) -> Generator[Dict[str, Any], None, None]:
         """Get traces from the database.
 
         Args:
@@ -208,25 +208,29 @@ class EthereumProvider(ClickhouseProvider):
         rows_stream = self.query_rows_stream(
             q,
             column_formats=ETHEREUM_TRACE_COLUMN_FORMATS,
+            query_formats=QUERY_FORMATS,
             parameters={
                 **(parameters or {}),
             },
         )
+        column_names: list[str] = rows_stream.source.column_names  # type: ignore
 
         with rows_stream:
-            named_results = [
-                dict(zip(rows_stream.source.column_names, row)) for row in rows_stream
-            ]
-            return convert_bytes_to_hex_generator(ChainStyle.ETH, named_results)
+            for row in rows_stream:
+                yield dict(zip(column_names, row))
 
     def events(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = {"blockNumber": True, "transactionIndex": True, "logIndex": True},
+        order_by: Optional[Dict[str, bool]] = {
+            "blockNumber": True,
+            "transactionIndex": True,
+            "logIndex": True,
+        },
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
-    ):
+    ) -> Generator[Dict[str, Any], None, None]:
         """Get events from the database.
 
         Args:
@@ -265,15 +269,12 @@ class EthereumProvider(ClickhouseProvider):
         rows_stream = self.query_rows_stream(
             q,
             column_formats=ETHEREUM_EVENT_COLUMN_FORMATS,
+            query_formats=QUERY_FORMATS,
             parameters={
                 **(parameters or {}),
             },
         )
-
+        column_names: list[str] = rows_stream.source.column_names  # type: ignore
         with rows_stream:
-            named_results = [
-                dict(zip(rows_stream.source.column_names, row)) for row in rows_stream
-            ]
-            return group_events_generator(
-                convert_bytes_to_hex_generator(ChainStyle.ETH, named_results)
-            )
+            for row in rows_stream:
+                yield group_event_topics(dict(zip(column_names, row)))

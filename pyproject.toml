@@ -22,8 +22,8 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 dependencies = [
-    "web3~=6.20",
-    "clickhouse-connect>=0.7.10,<0.8",
+    "web3~=7.12",
+    "clickhouse-connect>=0.8.17,<0.9",
     "base58>=2.1.1,<3",
 ]
 

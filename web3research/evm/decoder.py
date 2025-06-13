@@ -1,7 +1,9 @@
 from binascii import hexlify
 from typing import Any, Dict, Sequence, Union
 
+from eth_typing import ABIElement, ABIEvent, ABIFunction
 import eth_utils
+from eth_utils.abi import event_abi_to_log_topic, function_abi_to_4byte_selector
 from web3 import Web3
 
 from web3research.common.types import Hash
@@ -114,8 +116,10 @@ class ContractDecoder:
             str: The event topic.
         """
         event_abi = self.get_event_abi(event_name)
+        # convert event_abi from dict to ABIEvent
+        event_abi = ABIEvent(**event_abi)
 
-        return "0x" + hexlify(eth_utils.event_abi_to_log_topic(event_abi)).decode()
+        return "0x" + hexlify(event_abi_to_log_topic(event_abi)).decode()
 
     def get_function_selector(self, function_name: str):
         """Get the selector of a function.
@@ -126,8 +130,7 @@ class ContractDecoder:
             str: The function selector.
         """
         function_abi = self.get_function_abi(function_name)
+        # convert function_abi from dict to ABIFunction
+        function_abi = ABIFunction(**function_abi)
 
-        return (
-            "0x"
-            + hexlify(eth_utils.function_abi_to_4byte_selector(function_abi)).decode()
-        )
+        return "0x" + hexlify(function_abi_to_4byte_selector(function_abi)).decode()

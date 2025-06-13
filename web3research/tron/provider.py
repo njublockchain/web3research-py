@@ -1,11 +1,11 @@
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Generator, Optional
 from web3research.common.type_convert import (
-    convert_bytes_to_hex_generator,
-    group_events_generator,
+    group_event_topics,
+    use_tron_address,
 )
-from web3research.common.types import ChainStyle
 from web3research.db import ClickhouseProvider
 from web3research.tron.formats import (
+    QUERY_FORMATS,
     TRON_ACCOUNT_CREATE_CONTRACT_COLUMN_FORMATS,
     TRON_ACCOUNT_PERMISSION_UPDATE_CONTRACT_COLUMN_FORMATS,
     TRON_ACCOUNT_UPDATE_CONTRACT_COLUMN_FORMATS,
@@ -93,7 +93,7 @@ class TronProvider(ClickhouseProvider):
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
-    ):
+    ) -> Generator[Dict[str, Any], None, None]:
         """Get blocks from the database.
 
         Args:
@@ -132,23 +132,23 @@ class TronProvider(ClickhouseProvider):
         rows_stream = self.query_rows_stream(
             q,
             column_formats=TRON_BLOCK_COLUMN_FORMATS,  # avoid auto convert string to bytes
+            query_formats=QUERY_FORMATS,
             parameters={**(parameters or {})},
         )
+        column_names = rows_stream.source.column_names  # type: ignore
 
         with rows_stream:
-            named_results = [
-                dict(zip(rows_stream.source.column_names, row)) for row in rows_stream
-            ]
-            return convert_bytes_to_hex_generator(ChainStyle.TRON, named_results)
+            for row in rows_stream:
+                yield use_tron_address(dict(zip(column_names, row)))
 
     def transactions(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "index": True},
+        order_by: Optional[Dict[str, bool]] = {"blockNumber": True, "index": True},
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
-    ):
+    ) -> Generator[Dict[str, Any], None, None]:
         """Get transactions from the database.
 
         Args:
@@ -187,23 +187,23 @@ class TronProvider(ClickhouseProvider):
         rows_stream = self.query_rows_stream(
             q,
             column_formats=TRON_TRANSACTION_COLUMN_FORMATS,  # avoid auto convert string to bytes
+            query_formats=QUERY_FORMATS,
             parameters={**(parameters or {})},
         )
+        column_names = rows_stream.source.column_names  # type: ignore
 
         with rows_stream:
-            named_results = [
-                dict(zip(rows_stream.source.column_names, row)) for row in rows_stream
-            ]
-            return convert_bytes_to_hex_generator(ChainStyle.TRON, named_results)
+            for row in rows_stream:
+                yield use_tron_address(dict(zip(column_names, row)))
 
     def internals(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "internalIndex": True},
+        order_by: Optional[Dict[str, bool]] = {"blockNumber": True, "internalIndex": True},
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
-    ):
+    ) -> Generator[Dict[str, Any], None, None]:
         """Get internals from the database.
 
         Args:
@@ -242,23 +242,27 @@ class TronProvider(ClickhouseProvider):
         rows_stream = self.query_rows_stream(
             q,
             column_formats=TRON_INTERNAL_COLUMN_FORMATS,  # avoid auto convert string to bytes
+            query_formats=QUERY_FORMATS,
             parameters={**(parameters or {})},
         )
+        column_names = rows_stream.source.column_names  # type: ignore
 
         with rows_stream:
-            named_results = [
-                dict(zip(rows_stream.source.column_names, row)) for row in rows_stream
-            ]
-            return convert_bytes_to_hex_generator(ChainStyle.TRON, named_results)
+            for row in rows_stream:
+                yield use_tron_address(dict(zip(column_names, row)))
 
     def events(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "transactionHash": True, "logIndex": True},
+        order_by: Optional[Dict[str, bool]] = {
+            "blockNumber": True,
+            "transactionHash": True,
+            "logIndex": True,
+        },
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
-    ):
+    ) -> Generator[Dict[str, Any], None, None]:
         """Get events from the database.
 
         Args:
@@ -297,25 +301,27 @@ class TronProvider(ClickhouseProvider):
         rows_stream = self.query_rows_stream(
             q,
             column_formats=TRON_EVENT_COLUMN_FORMATS,  # avoid auto convert string to bytes
+            query_formats=QUERY_FORMATS,
             parameters={**(parameters or {})},
         )
+        column_names = rows_stream.source.column_names  # type: ignore
 
         with rows_stream:
-            named_results = [
-                dict(zip(rows_stream.source.column_names, row)) for row in rows_stream
-            ]
-            return group_events_generator(
-                convert_bytes_to_hex_generator(ChainStyle.TRON, named_results)
-            )
+            for row in rows_stream:
+                yield group_event_topics(use_tron_address(dict(zip(column_names, row))))
 
     def account_create_contracts(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "transactionHash": True, "contractIndex": True},
+        order_by: Optional[Dict[str, bool]] = {
+            "blockNumber": True,
+            "transactionHash": True,
+            "contractIndex": True,
+        },
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
-    ):
+    ) -> Generator[Dict[str, Any], None, None]:
         """Get accountCreateContracts from the database.
 
         Args:
@@ -354,23 +360,27 @@ class TronProvider(ClickhouseProvider):
         rows_stream = self.query_rows_stream(
             q,
             column_formats=TRON_ACCOUNT_CREATE_CONTRACT_COLUMN_FORMATS,  # avoid auto convert string to bytes
+            query_formats=QUERY_FORMATS,
             parameters={**(parameters or {})},
         )
+        column_names = rows_stream.source.column_names  # type: ignore
 
         with rows_stream:
-            named_results = [
-                dict(zip(rows_stream.source.column_names, row)) for row in rows_stream
-            ]
-            return convert_bytes_to_hex_generator(ChainStyle.TRON, named_results)
+            for row in rows_stream:
+                yield use_tron_address(dict(zip(column_names, row)))
 
     def account_permission_update_contracts(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "transactionHash": True, "contractIndex": True},
+        order_by: Optional[Dict[str, bool]] = {
+            "blockNumber": True,
+            "transactionHash": True,
+            "contractIndex": True,
+        },
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
-    ):
+    ) -> Generator[Dict[str, Any], None, None]:
         """Get accountPermissionUpdateContracts from the database.
 
         Args:
@@ -409,23 +419,27 @@ class TronProvider(ClickhouseProvider):
         rows_stream = self.query_rows_stream(
             q,
             column_formats=TRON_ACCOUNT_PERMISSION_UPDATE_CONTRACT_COLUMN_FORMATS,  # avoid auto convert string to bytes
+            query_formats=QUERY_FORMATS,
             parameters={**(parameters or {})},
         )
+        column_names = rows_stream.source.column_names  # type: ignore
 
         with rows_stream:
-            named_results = [
-                dict(zip(rows_stream.source.column_names, row)) for row in rows_stream
-            ]
-            return convert_bytes_to_hex_generator(ChainStyle.TRON, named_results)
+            for row in rows_stream:
+                yield use_tron_address(dict(zip(column_names, row)))
 
     def account_update_contracts(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "transactionHash": True, "contractIndex": True},
+        order_by: Optional[Dict[str, bool]] = {
+            "blockNumber": True,
+            "transactionHash": True,
+            "contractIndex": True,
+        },
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
-    ):
+    ) -> Generator[Dict[str, Any], None, None]:
         """Get accountUpdateContracts from the database.
 
         Args:
@@ -464,23 +478,27 @@ class TronProvider(ClickhouseProvider):
         rows_stream = self.query_rows_stream(
             q,
             column_formats=TRON_ACCOUNT_UPDATE_CONTRACT_COLUMN_FORMATS,  # avoid auto convert string to bytes
+            query_formats=QUERY_FORMATS,
             parameters={**(parameters or {})},
         )
 
+        column_names = rows_stream.source.column_names  # type: ignore
         with rows_stream:
-            named_results = [
-                dict(zip(rows_stream.source.column_names, row)) for row in rows_stream
-            ]
-            return convert_bytes_to_hex_generator(ChainStyle.TRON, named_results)
+            for row in rows_stream:
+                yield use_tron_address(dict(zip(column_names, row)))
 
     def asset_issue_contracts(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "transactionHash": True, "contractIndex": True},
+        order_by: Optional[Dict[str, bool]] = {
+            "blockNumber": True,
+            "transactionHash": True,
+            "contractIndex": True,
+        },
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
-    ):
+    ) -> Generator[Dict[str, Any], None, None]:
         """Get assetIssueContracts from the database.
 
         Args:
@@ -519,23 +537,26 @@ class TronProvider(ClickhouseProvider):
         rows_stream = self.query_rows_stream(
             q,
             column_formats=TRON_ASSET_ISSUE_CONTRACT_COLUMN_FORMATS,  # avoid auto convert string to bytes
+            query_formats=QUERY_FORMATS,
             parameters={**(parameters or {})},
-        )
-
+        )        
+        column_names = rows_stream.source.column_names  # type: ignore
         with rows_stream:
-            named_results = [
-                dict(zip(rows_stream.source.column_names, row)) for row in rows_stream
-            ]
-            return convert_bytes_to_hex_generator(ChainStyle.TRON, named_results)
+            for row in rows_stream:
+                yield use_tron_address(dict(zip(column_names, row)))
 
     def cancel_all_unfreeze_v2_contracts(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "transactionHash": True, "contractIndex": True},
+        order_by: Optional[Dict[str, bool]] = {
+            "blockNumber": True,
+            "transactionHash": True,
+            "contractIndex": True,
+        },
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
-    ):
+    ) -> Generator[Dict[str, Any], None, None]:
         """Get cancelAllUnfreezeV2Contracts from the database.
 
         Args:
@@ -574,23 +595,26 @@ class TronProvider(ClickhouseProvider):
         rows_stream = self.query_rows_stream(
             q,
             column_formats=TRON_CANCEL_ALL_UNFREEZE_V2_CONTRACT_COLUMN_FORMATS,  # avoid auto convert string to bytes
+            query_formats=QUERY_FORMATS,
             parameters={**(parameters or {})},
         )
-
+        column_names = rows_stream.source.column_names  # type: ignore
         with rows_stream:
-            named_results = [
-                dict(zip(rows_stream.source.column_names, row)) for row in rows_stream
-            ]
-            return convert_bytes_to_hex_generator(ChainStyle.TRON, named_results)
+            for row in rows_stream:
+                yield use_tron_address(dict(zip(column_names, row)))
 
     def clear_abi_contracts(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "transactionHash": True, "contractIndex": True},
+        order_by: Optional[Dict[str, bool]] = {
+            "blockNumber": True,
+            "transactionHash": True,
+            "contractIndex": True,
+        },
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
-    ):
+    ) -> Generator[Dict[str, Any], None, None]:
         """Get clearAbiContracts from the database.
 
         Args:
@@ -629,23 +653,26 @@ class TronProvider(ClickhouseProvider):
         rows_stream = self.query_rows_stream(
             q,
             column_formats=TRON_CLEAR_ABI_CONTRACT_COLUMN_FORMATS,  # avoid auto convert string to bytes
+            query_formats=QUERY_FORMATS,
             parameters={**(parameters or {})},
         )
-
+        column_names = rows_stream.source.column_names  # type: ignore
         with rows_stream:
-            named_results = [
-                dict(zip(rows_stream.source.column_names, row)) for row in rows_stream
-            ]
-            return convert_bytes_to_hex_generator(ChainStyle.TRON, named_results)
+            for row in rows_stream:
+                yield use_tron_address(dict(zip(column_names, row)))
 
     def create_smart_contracts(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "transactionHash": True, "contractIndex": True},
+        order_by: Optional[Dict[str, bool]] = {
+            "blockNumber": True,
+            "transactionHash": True,
+            "contractIndex": True,
+        },
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
-    ):
+    ) -> Generator[Dict[str, Any], None, None]:
         """Get createSmartContracts from the database.
 
         Args:
@@ -684,23 +711,26 @@ class TronProvider(ClickhouseProvider):
         rows_stream = self.query_rows_stream(
             q,
             column_formats=TRON_CREATE_SMART_CONTRACT_COLUMN_FORMATS,  # avoid auto convert string to bytes
+            query_formats=QUERY_FORMATS,
             parameters={**(parameters or {})},
         )
-
+        column_names = rows_stream.source.column_names  # type: ignore
         with rows_stream:
-            named_results = [
-                dict(zip(rows_stream.source.column_names, row)) for row in rows_stream
-            ]
-            return convert_bytes_to_hex_generator(ChainStyle.TRON, named_results)
+            for row in rows_stream:
+                yield use_tron_address(dict(zip(column_names, row)))
 
     def delegate_resource_contracts(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "transactionHash": True, "contractIndex": True},
+        order_by: Optional[Dict[str, bool]] = {
+            "blockNumber": True,
+            "transactionHash": True,
+            "contractIndex": True,
+        },
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
-    ):
+    ) -> Generator[Dict[str, Any], None, None]:
         """Get delegateResourceContracts from the database.
 
         Args:
@@ -739,23 +769,26 @@ class TronProvider(ClickhouseProvider):
         rows_stream = self.query_rows_stream(
             q,
             column_formats=TRON_DELEGATE_RESOURCE_CONTRACT_COLUMN_FORMATS,  # avoid auto convert string to bytes
+            query_formats=QUERY_FORMATS,
             parameters={**(parameters or {})},
         )
-
+        column_names = rows_stream.source.column_names  # type: ignore
         with rows_stream:
-            named_results = [
-                dict(zip(rows_stream.source.column_names, row)) for row in rows_stream
-            ]
-            return convert_bytes_to_hex_generator(ChainStyle.TRON, named_results)
+            for row in rows_stream:
+                yield use_tron_address(dict(zip(column_names, row)))
 
     def exchange_create_contracts(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "transactionHash": True, "contractIndex": True},
+        order_by: Optional[Dict[str, bool]] = {
+            "blockNumber": True,
+            "transactionHash": True,
+            "contractIndex": True,
+        },
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
-    ):
+    ) -> Generator[Dict[str, Any], None, None]:
         """Get exchangeCreateContracts from the database.
 
         Args:
@@ -794,23 +827,26 @@ class TronProvider(ClickhouseProvider):
         rows_stream = self.query_rows_stream(
             q,
             column_formats=TRON_EXCHANGE_CREATE_CONTRACT_COLUMN_FORMATS,  # avoid auto convert string to bytes
+            query_formats=QUERY_FORMATS,
             parameters={**(parameters or {})},
         )
-
+        column_names = rows_stream.source.column_names  # type: ignore
         with rows_stream:
-            named_results = [
-                dict(zip(rows_stream.source.column_names, row)) for row in rows_stream
-            ]
-            return convert_bytes_to_hex_generator(ChainStyle.TRON, named_results)
+            for row in rows_stream:
+                yield use_tron_address(dict(zip(column_names, row)))
 
     def exchange_inject_contracts(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "transactionHash": True, "contractIndex": True},
+        order_by: Optional[Dict[str, bool]] = {
+            "blockNumber": True,
+            "transactionHash": True,
+            "contractIndex": True,
+        },
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
-    ):
+    ) -> Generator[Dict[str, Any], None, None]:
         """Get exchangeInjectContracts from the database.
 
         Args:
@@ -849,23 +885,26 @@ class TronProvider(ClickhouseProvider):
         rows_stream = self.query_rows_stream(
             q,
             column_formats=TRON_EXCHANGE_INJECT_CONTRACT_COLUMN_FORMATS,  # avoid auto convert string to bytes
+            query_formats=QUERY_FORMATS,
             parameters={**(parameters or {})},
         )
-
+        column_names = rows_stream.source.column_names  # type: ignore
         with rows_stream:
-            named_results = [
-                dict(zip(rows_stream.source.column_names, row)) for row in rows_stream
-            ]
-            return convert_bytes_to_hex_generator(ChainStyle.TRON, named_results)
+            for row in rows_stream:
+                yield use_tron_address(dict(zip(column_names, row)))
 
     def exchange_transaction_contracts(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "transactionHash": True, "contractIndex": True},
+        order_by: Optional[Dict[str, bool]] = {
+            "blockNumber": True,
+            "transactionHash": True,
+            "contractIndex": True,
+        },
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
-    ):
+    ) -> Generator[Dict[str, Any], None, None]:
         """Get exchangeTransactionContracts from the database.
 
         Args:
@@ -904,23 +943,26 @@ class TronProvider(ClickhouseProvider):
         rows_stream = self.query_rows_stream(
             q,
             column_formats=TRON_EXCHANGE_TRANSACTION_CONTRACT_COLUMN_FORMATS,  # avoid auto convert string to bytes
+            query_formats=QUERY_FORMATS,
             parameters={**(parameters or {})},
         )
-
+        column_names = rows_stream.source.column_names  # type: ignore
         with rows_stream:
-            named_results = [
-                dict(zip(rows_stream.source.column_names, row)) for row in rows_stream
-            ]
-            return convert_bytes_to_hex_generator(ChainStyle.TRON, named_results)
+            for row in rows_stream:
+                yield use_tron_address(dict(zip(column_names, row)))
 
     def exchange_withdraw_contracts(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "transactionHash": True, "contractIndex": True},
+        order_by: Optional[Dict[str, bool]] = {
+            "blockNumber": True,
+            "transactionHash": True,
+            "contractIndex": True,
+        },
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
-    ):
+    ) -> Generator[Dict[str, Any], None, None]:
         """Get exchangeWithdrawContracts from the database.
 
         Args:
@@ -959,23 +1001,26 @@ class TronProvider(ClickhouseProvider):
         rows_stream = self.query_rows_stream(
             q,
             column_formats=TRON_EXCHANGE_WITHDRAW_CONTRACT_COLUMN_FORMATS,  # avoid auto convert string to bytes
+            query_formats=QUERY_FORMATS,
             parameters={**(parameters or {})},
         )
-
+        column_names = rows_stream.source.column_names  # type: ignore
         with rows_stream:
-            named_results = [
-                dict(zip(rows_stream.source.column_names, row)) for row in rows_stream
-            ]
-            return convert_bytes_to_hex_generator(ChainStyle.TRON, named_results)
+            for row in rows_stream:
+                yield use_tron_address(dict(zip(column_names, row)))
 
     def freeze_balance_contracts(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "transactionHash": True, "contractIndex": True},
+        order_by: Optional[Dict[str, bool]] = {
+            "blockNumber": True,
+            "transactionHash": True,
+            "contractIndex": True,
+        },
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
-    ):
+    ) -> Generator[Dict[str, Any], None, None]:
         """Get freezeBalanceContracts from the database.
 
         Args:
@@ -1014,23 +1059,26 @@ class TronProvider(ClickhouseProvider):
         rows_stream = self.query_rows_stream(
             q,
             column_formats=TRON_FREEZE_BALANCE_CONTRACT_COLUMN_FORMATS,  # avoid auto convert string to bytes
+            query_formats=QUERY_FORMATS,
             parameters={**(parameters or {})},
         )
-
+        column_names = rows_stream.source.column_names  # type: ignore
         with rows_stream:
-            named_results = [
-                dict(zip(rows_stream.source.column_names, row)) for row in rows_stream
-            ]
-            return convert_bytes_to_hex_generator(ChainStyle.TRON, named_results)
+            for row in rows_stream:
+                yield use_tron_address(dict(zip(column_names, row)))
 
     def freeze_balance_v2_contracts(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "transactionHash": True, "contractIndex": True},
+        order_by: Optional[Dict[str, bool]] = {
+            "blockNumber": True,
+            "transactionHash": True,
+            "contractIndex": True,
+        },
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
-    ):
+    ) -> Generator[Dict[str, Any], None, None]:
         """Get freezeBalanceV2Contracts from the database.
 
         Args:
@@ -1069,23 +1117,26 @@ class TronProvider(ClickhouseProvider):
         rows_stream = self.query_rows_stream(
             q,
             column_formats=TRON_FREEZE_BALANCE_V2_CONTRACT_COLUMN_FORMATS,  # avoid auto convert string to bytes
+            query_formats=QUERY_FORMATS,
             parameters={**(parameters or {})},
         )
-
+        column_names = rows_stream.source.column_names  # type: ignore
         with rows_stream:
-            named_results = [
-                dict(zip(rows_stream.source.column_names, row)) for row in rows_stream
-            ]
-            return convert_bytes_to_hex_generator(ChainStyle.TRON, named_results)
+            for row in rows_stream:
+                yield use_tron_address(dict(zip(column_names, row)))
 
     def market_cancel_order_contracts(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "transactionHash": True, "contractIndex": True},
+        order_by: Optional[Dict[str, bool]] = {
+            "blockNumber": True,
+            "transactionHash": True,
+            "contractIndex": True,
+        },
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
-    ):
+    ) -> Generator[Dict[str, Any], None, None]:
         """Get marketCancelOrderContracts from the database.
 
         Args:
@@ -1124,23 +1175,26 @@ class TronProvider(ClickhouseProvider):
         rows_stream = self.query_rows_stream(
             q,
             column_formats=TRON_MARKET_CANCEL_ORDER_CONTRACT_COLUMN_FORMATS,  # avoid auto convert string to bytes
+            query_formats=QUERY_FORMATS,
             parameters={**(parameters or {})},
         )
-
+        column_names = rows_stream.source.column_names  # type: ignore
         with rows_stream:
-            named_results = [
-                dict(zip(rows_stream.source.column_names, row)) for row in rows_stream
-            ]
-            return convert_bytes_to_hex_generator(ChainStyle.TRON, named_results)
+            for row in rows_stream:
+                yield use_tron_address(dict(zip(column_names, row)))
 
     def market_sell_asset_contracts(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "transactionHash": True, "contractIndex": True},
+        order_by: Optional[Dict[str, bool]] = {
+            "blockNumber": True,
+            "transactionHash": True,
+            "contractIndex": True,
+        },
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
-    ):
+    ) -> Generator[Dict[str, Any], None, None]:
         """Get marketSellAssetContracts from the database.
 
         Args:
@@ -1179,23 +1233,27 @@ class TronProvider(ClickhouseProvider):
         rows_stream = self.query_rows_stream(
             q,
             column_formats=TRON_MARKET_SELL_ASSET_CONTRACT_COLUMN_FORMATS,  # avoid auto convert string to bytes
+            query_formats=QUERY_FORMATS,
             parameters={**(parameters or {})},
         )
+        column_names = rows_stream.source.column_names  # type: ignore
 
         with rows_stream:
-            named_results = [
-                dict(zip(rows_stream.source.column_names, row)) for row in rows_stream
-            ]
-            return convert_bytes_to_hex_generator(ChainStyle.TRON, named_results)
+            for row in rows_stream:
+                yield use_tron_address(dict(zip(column_names, row)))
 
     def participate_asset_issue_contracts(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "transactionHash": True, "contractIndex": True},
+        order_by: Optional[Dict[str, bool]] = {
+            "blockNumber": True,
+            "transactionHash": True,
+            "contractIndex": True,
+        },
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
-    ):
+    ) -> Generator[Dict[str, Any], None, None]:
         """Get participateAssetIssueContracts from the database.
 
         Args:
@@ -1234,23 +1292,27 @@ class TronProvider(ClickhouseProvider):
         rows_stream = self.query_rows_stream(
             q,
             column_formats=TRON_PARTICIPATE_ASSET_ISSUE_CONTRACT_COLUMN_FORMATS,  # avoid auto convert string to bytes
+            query_formats=QUERY_FORMATS,
             parameters={**(parameters or {})},
         )
+        column_names = rows_stream.source.column_names  # type: ignore
 
         with rows_stream:
-            named_results = [
-                dict(zip(rows_stream.source.column_names, row)) for row in rows_stream
-            ]
-            return convert_bytes_to_hex_generator(ChainStyle.TRON, named_results)
+            for row in rows_stream:
+                yield use_tron_address(dict(zip(column_names, row)))
 
     def proposal_approve_contracts(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "transactionHash": True, "contractIndex": True},
+        order_by: Optional[Dict[str, bool]] = {
+            "blockNumber": True,
+            "transactionHash": True,
+            "contractIndex": True,
+        },
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
-    ):
+    ) -> Generator[Dict[str, Any], None, None]:
         """Get proposalApproveContracts from the database.
 
         Args:
@@ -1289,23 +1351,27 @@ class TronProvider(ClickhouseProvider):
         rows_stream = self.query_rows_stream(
             q,
             column_formats=TRON_PROPOSAL_APPROVE_CONTRACT_COLUMN_FORMATS,  # avoid auto convert string to bytes
+            query_formats=QUERY_FORMATS,
             parameters={**(parameters or {})},
         )
+        column_names = rows_stream.source.column_names  # type: ignore
 
         with rows_stream:
-            named_results = [
-                dict(zip(rows_stream.source.column_names, row)) for row in rows_stream
-            ]
-            return convert_bytes_to_hex_generator(ChainStyle.TRON, named_results)
+            for row in rows_stream:
+                yield use_tron_address(dict(zip(column_names, row)))
 
     def proposal_create_contracts(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "transactionHash": True, "contractIndex": True},
+        order_by: Optional[Dict[str, bool]] = {
+            "blockNumber": True,
+            "transactionHash": True,
+            "contractIndex": True,
+        },
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
-    ):
+    ) -> Generator[Dict[str, Any], None, None]:
         """Get proposalCreateContracts from the database.
 
         Args:
@@ -1344,23 +1410,26 @@ class TronProvider(ClickhouseProvider):
         rows_stream = self.query_rows_stream(
             q,
             column_formats=TRON_PROPOSAL_CREATE_CONTRACT_COLUMN_FORMATS,  # avoid auto convert string to bytes
+            query_formats=QUERY_FORMATS,
             parameters={**(parameters or {})},
         )
-
+        column_names = rows_stream.source.column_names  # type: ignore
         with rows_stream:
-            named_results = [
-                dict(zip(rows_stream.source.column_names, row)) for row in rows_stream
-            ]
-            return convert_bytes_to_hex_generator(ChainStyle.TRON, named_results)
+            for row in rows_stream:
+                yield use_tron_address(dict(zip(column_names, row)))
 
     def proposal_delete_contracts(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "transactionHash": True, "contractIndex": True},
+        order_by: Optional[Dict[str, bool]] = {
+            "blockNumber": True,
+            "transactionHash": True,
+            "contractIndex": True,
+        },
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
-    ):
+    ) -> Generator[Dict[str, Any], None, None]:
         """Get proposalDeleteContracts from the database.
 
         Args:
@@ -1399,23 +1468,26 @@ class TronProvider(ClickhouseProvider):
         rows_stream = self.query_rows_stream(
             q,
             column_formats=TRON_PROPOSAL_DELETE_CONTRACT_COLUMN_FORMATS,  # avoid auto convert string to bytes
+            query_formats=QUERY_FORMATS,
             parameters={**(parameters or {})},
         )
-
+        column_names = rows_stream.source.column_names  # type: ignore
         with rows_stream:
-            named_results = [
-                dict(zip(rows_stream.source.column_names, row)) for row in rows_stream
-            ]
-            return convert_bytes_to_hex_generator(ChainStyle.TRON, named_results)
+            for row in rows_stream:
+                yield use_tron_address(dict(zip(column_names, row)))
 
     def set_account_id_contracts(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "transactionHash": True, "contractIndex": True},
+        order_by: Optional[Dict[str, bool]] = {
+            "blockNumber": True,
+            "transactionHash": True,
+            "contractIndex": True,
+        },
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
-    ):
+    ) -> Generator[Dict[str, Any], None, None]:
         """Get setAccountIdContracts from the database.
 
         Args:
@@ -1454,23 +1526,26 @@ class TronProvider(ClickhouseProvider):
         rows_stream = self.query_rows_stream(
             q,
             column_formats=TRON_SET_ACCOUNT_ID_CONTRACT_COLUMN_FORMATS,  # avoid auto convert string to bytes
+            query_formats=QUERY_FORMATS,
             parameters={**(parameters or {})},
         )
-
+        column_names = rows_stream.source.column_names  # type: ignore
         with rows_stream:
-            named_results = [
-                dict(zip(rows_stream.source.column_names, row)) for row in rows_stream
-            ]
-            return convert_bytes_to_hex_generator(ChainStyle.TRON, named_results)
+            for row in rows_stream:
+                yield use_tron_address(dict(zip(column_names, row)))
 
     def shielded_transfer_contracts(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "transactionHash": True, "contractIndex": True},
+        order_by: Optional[Dict[str, bool]] = {
+            "blockNumber": True,
+            "transactionHash": True,
+            "contractIndex": True,
+        },
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
-    ):
+    ) -> Generator[Dict[str, Any], None, None]:
         """Get shieldedTransferContracts from the database.
 
         Args:
@@ -1509,23 +1584,26 @@ class TronProvider(ClickhouseProvider):
         rows_stream = self.query_rows_stream(
             q,
             column_formats=TRON_SHIELDED_TRANSFER_CONTRACT_COLUMN_FORMATS,  # avoid auto convert string to bytes
+            query_formats=QUERY_FORMATS,
             parameters={**(parameters or {})},
         )
-
+        column_names = rows_stream.source.column_names  # type: ignore
         with rows_stream:
-            named_results = [
-                dict(zip(rows_stream.source.column_names, row)) for row in rows_stream
-            ]
-            return convert_bytes_to_hex_generator(ChainStyle.TRON, named_results)
+            for row in rows_stream:
+                yield use_tron_address(dict(zip(column_names, row)))
 
     def transfer_asset_contracts(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "transactionHash": True, "contractIndex": True},
+        order_by: Optional[Dict[str, bool]] = {
+            "blockNumber": True,
+            "transactionHash": True,
+            "contractIndex": True,
+        },
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
-    ):
+    ) -> Generator[Dict[str, Any], None, None]:
         """Get transferAssetContracts from the database.
 
         Args:
@@ -1564,23 +1642,26 @@ class TronProvider(ClickhouseProvider):
         rows_stream = self.query_rows_stream(
             q,
             column_formats=TRON_TRANSFER_ASSET_CONTRACT_COLUMN_FORMATS,  # avoid auto convert string to bytes
+            query_formats=QUERY_FORMATS,
             parameters={**(parameters or {})},
         )
-
+        column_names = rows_stream.source.column_names  # type: ignore
         with rows_stream:
-            named_results = [
-                dict(zip(rows_stream.source.column_names, row)) for row in rows_stream
-            ]
-            return convert_bytes_to_hex_generator(ChainStyle.TRON, named_results)
+            for row in rows_stream:
+                yield use_tron_address(dict(zip(column_names, row)))
 
     def transfer_contracts(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "transactionHash": True, "contractIndex": True},
+        order_by: Optional[Dict[str, bool]] = {
+            "blockNumber": True,
+            "transactionHash": True,
+            "contractIndex": True,
+        },
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
-    ):
+    ) -> Generator[Dict[str, Any], None, None]:
         """Get transferContracts from the database.
 
         Args:
@@ -1619,23 +1700,26 @@ class TronProvider(ClickhouseProvider):
         rows_stream = self.query_rows_stream(
             q,
             column_formats=TRON_TRANSFER_CONTRACT_COLUMN_FORMATS,  # avoid auto convert string to bytes
+            query_formats=QUERY_FORMATS,
             parameters={**(parameters or {})},
         )
-
+        column_names = rows_stream.source.column_names  # type: ignore
         with rows_stream:
-            named_results = [
-                dict(zip(rows_stream.source.column_names, row)) for row in rows_stream
-            ]
-            return convert_bytes_to_hex_generator(ChainStyle.TRON, named_results)
+            for row in rows_stream:
+                yield use_tron_address(dict(zip(column_names, row)))
 
     def trigger_smart_contracts(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "transactionHash": True, "contractIndex": True},
+        order_by: Optional[Dict[str, bool]] = {
+            "blockNumber": True,
+            "transactionHash": True,
+            "contractIndex": True,
+        },
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
-    ):
+    ) -> Generator[Dict[str, Any], None, None]:
         """Get triggerSmartContracts from the database.
 
         Args:
@@ -1674,23 +1758,26 @@ class TronProvider(ClickhouseProvider):
         rows_stream = self.query_rows_stream(
             q,
             column_formats=TRON_TRIGGER_SMART_CONTRACT_COLUMN_FORMATS,  # avoid auto convert string to bytes
+            query_formats=QUERY_FORMATS,
             parameters={**(parameters or {})},
         )
-
+        column_names = rows_stream.source.column_names  # type: ignore
         with rows_stream:
-            named_results = [
-                dict(zip(rows_stream.source.column_names, row)) for row in rows_stream
-            ]
-            return convert_bytes_to_hex_generator(ChainStyle.TRON, named_results)
+            for row in rows_stream:
+                yield use_tron_address(dict(zip(column_names, row)))
 
     def undelegate_resource_contracts(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "transactionHash": True, "contractIndex": True},
+        order_by: Optional[Dict[str, bool]] = {
+            "blockNumber": True,
+            "transactionHash": True,
+            "contractIndex": True,
+        },
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
-    ):
+    ) -> Generator[Dict[str, Any], None, None]:
         """Get undelegateResourceContracts from the database.
 
         Args:
@@ -1729,23 +1816,26 @@ class TronProvider(ClickhouseProvider):
         rows_stream = self.query_rows_stream(
             q,
             column_formats=TRON_UNDELEGATE_RESOURCE_CONTRACT_COLUMN_FORMATS,  # avoid auto convert string to bytes
+            query_formats=QUERY_FORMATS,
             parameters={**(parameters or {})},
         )
-
+        column_names = rows_stream.source.column_names  # type: ignore
         with rows_stream:
-            named_results = [
-                dict(zip(rows_stream.source.column_names, row)) for row in rows_stream
-            ]
-            return convert_bytes_to_hex_generator(ChainStyle.TRON, named_results)
+            for row in rows_stream:
+                yield use_tron_address(dict(zip(column_names, row)))
 
     def unfreeze_asset_contracts(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "transactionHash": True, "contractIndex": True},
+        order_by: Optional[Dict[str, bool]] = {
+            "blockNumber": True,
+            "transactionHash": True,
+            "contractIndex": True,
+        },
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
-    ):
+    ) -> Generator[Dict[str, Any], None, None]:
         """Get unfreezeAssetContracts from the database.
 
         Args:
@@ -1784,23 +1874,26 @@ class TronProvider(ClickhouseProvider):
         rows_stream = self.query_rows_stream(
             q,
             column_formats=TRON_UNFREEZE_ASSET_CONTRACT_COLUMN_FORMATS,  # avoid auto convert string to bytes
+            query_formats=QUERY_FORMATS,
             parameters={**(parameters or {})},
         )
-
+        column_names = rows_stream.source.column_names  # type: ignore
         with rows_stream:
-            named_results = [
-                dict(zip(rows_stream.source.column_names, row)) for row in rows_stream
-            ]
-            return convert_bytes_to_hex_generator(ChainStyle.TRON, named_results)
+            for row in rows_stream:
+                yield use_tron_address(dict(zip(column_names, row)))
 
     def unfreeze_balance_contracts(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "transactionHash": True, "contractIndex": True},
+        order_by: Optional[Dict[str, bool]] = {
+            "blockNumber": True,
+            "transactionHash": True,
+            "contractIndex": True,
+        },
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
-    ):
+    ) -> Generator[Dict[str, Any], None, None]:
         """Get unfreezeBalanceContracts from the database.
 
         Args:
@@ -1839,23 +1932,26 @@ class TronProvider(ClickhouseProvider):
         rows_stream = self.query_rows_stream(
             q,
             column_formats=TRON_UNFREEZE_BALANCE_CONTRACT_COLUMN_FORMATS,  # avoid auto convert string to bytes
+            query_formats=QUERY_FORMATS,
             parameters={**(parameters or {})},
         )
-
+        column_names = rows_stream.source.column_names  # type: ignore
         with rows_stream:
-            named_results = [
-                dict(zip(rows_stream.source.column_names, row)) for row in rows_stream
-            ]
-            return convert_bytes_to_hex_generator(ChainStyle.TRON, named_results)
+            for row in rows_stream:
+                yield use_tron_address(dict(zip(column_names, row)))
 
     def unfreeze_balance_v2_contracts(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "transactionHash": True, "contractIndex": True},
+        order_by: Optional[Dict[str, bool]] = {
+            "blockNumber": True,
+            "transactionHash": True,
+            "contractIndex": True,
+        },
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
-    ):
+    ) -> Generator[Dict[str, Any], None, None]:
         """Get unfreezeBalanceV2Contracts from the database.
 
         Args:
@@ -1894,23 +1990,26 @@ class TronProvider(ClickhouseProvider):
         rows_stream = self.query_rows_stream(
             q,
             column_formats=TRON_UNFREEZE_BALANCE_V2_CONTRACT_COLUMN_FORMATS,  # avoid auto convert string to bytes
+            query_formats=QUERY_FORMATS,
             parameters={**(parameters or {})},
         )
-
+        column_names = rows_stream.source.column_names  # type: ignore
         with rows_stream:
-            named_results = [
-                dict(zip(rows_stream.source.column_names, row)) for row in rows_stream
-            ]
-            return convert_bytes_to_hex_generator(ChainStyle.TRON, named_results)
+            for row in rows_stream:
+                yield use_tron_address(dict(zip(column_names, row)))
 
     def update_asset_contracts(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "transactionHash": True, "contractIndex": True},
+        order_by: Optional[Dict[str, bool]] = {
+            "blockNumber": True,
+            "transactionHash": True,
+            "contractIndex": True,
+        },
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
-    ):
+    ) -> Generator[Dict[str, Any], None, None]:
         """Get updateAssetContracts from the database.
 
         Args:
@@ -1949,23 +2048,26 @@ class TronProvider(ClickhouseProvider):
         rows_stream = self.query_rows_stream(
             q,
             column_formats=TRON_UPDATE_ASSET_CONTRACT_COLUMN_FORMATS,  # avoid auto convert string to bytes
+            query_formats=QUERY_FORMATS,
             parameters={**(parameters or {})},
         )
-
+        column_names = rows_stream.source.column_names  # type: ignore
         with rows_stream:
-            named_results = [
-                dict(zip(rows_stream.source.column_names, row)) for row in rows_stream
-            ]
-            return convert_bytes_to_hex_generator(ChainStyle.TRON, named_results)
+            for row in rows_stream:
+                yield use_tron_address(dict(zip(column_names, row)))
 
     def update_brokerage_contracts(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "transactionHash": True, "contractIndex": True},
+        order_by: Optional[Dict[str, bool]] = {
+            "blockNumber": True,
+            "transactionHash": True,
+            "contractIndex": True,
+        },
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
-    ):
+    ) -> Generator[Dict[str, Any], None, None]:
         """Get updateBrokerageContracts from the database.
 
         Args:
@@ -2004,23 +2106,26 @@ class TronProvider(ClickhouseProvider):
         rows_stream = self.query_rows_stream(
             q,
             column_formats=TRON_UPDATE_BROKERAGE_CONTRACT_COLUMN_FORMATS,  # avoid auto convert string to bytes
+            query_formats=QUERY_FORMATS,
             parameters={**(parameters or {})},
         )
-
+        column_names = rows_stream.source.column_names  # type: ignore
         with rows_stream:
-            named_results = [
-                dict(zip(rows_stream.source.column_names, row)) for row in rows_stream
-            ]
-            return convert_bytes_to_hex_generator(ChainStyle.TRON, named_results)
+            for row in rows_stream:
+                yield use_tron_address(dict(zip(column_names, row)))
 
     def update_energy_limit_contracts(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "transactionHash": True, "contractIndex": True},
+        order_by: Optional[Dict[str, bool]] = {
+            "blockNumber": True,
+            "transactionHash": True,
+            "contractIndex": True,
+        },
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
-    ):
+    ) -> Generator[Dict[str, Any], None, None]:
         """Get updateEnergyLimitContracts from the database.
 
         Args:
@@ -2059,23 +2164,26 @@ class TronProvider(ClickhouseProvider):
         rows_stream = self.query_rows_stream(
             q,
             column_formats=TRON_UPDATE_ENERGY_LIMIT_CONTRACT_COLUMN_FORMATS,  # avoid auto convert string to bytes
+            query_formats=QUERY_FORMATS,
             parameters={**(parameters or {})},
         )
-
+        column_names = rows_stream.source.column_names  # type: ignore
         with rows_stream:
-            named_results = [
-                dict(zip(rows_stream.source.column_names, row)) for row in rows_stream
-            ]
-            return convert_bytes_to_hex_generator(ChainStyle.TRON, named_results)
+            for row in rows_stream:
+                yield use_tron_address(dict(zip(column_names, row)))
 
     def update_setting_contracts(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "transactionHash": True, "contractIndex": True},
+        order_by: Optional[Dict[str, bool]] = {
+            "blockNumber": True,
+            "transactionHash": True,
+            "contractIndex": True,
+        },
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
-    ):
+    ) -> Generator[Dict[str, Any], None, None]:
         """Get updateSettingContracts from the database.
 
         Args:
@@ -2114,23 +2222,26 @@ class TronProvider(ClickhouseProvider):
         rows_stream = self.query_rows_stream(
             q,
             column_formats=TRON_UPDATE_SETTING_CONTRACT_COLUMN_FORMATS,  # avoid auto convert string to bytes
+            query_formats=QUERY_FORMATS,
             parameters={**(parameters or {})},
         )
-
+        column_names = rows_stream.source.column_names  # type: ignore
         with rows_stream:
-            named_results = [
-                dict(zip(rows_stream.source.column_names, row)) for row in rows_stream
-            ]
-            return convert_bytes_to_hex_generator(ChainStyle.TRON, named_results)
+            for row in rows_stream:
+                yield use_tron_address(dict(zip(column_names, row)))
 
     def vote_asset_contracts(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "transactionHash": True, "contractIndex": True},
+        order_by: Optional[Dict[str, bool]] = {
+            "blockNumber": True,
+            "transactionHash": True,
+            "contractIndex": True,
+        },
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
-    ):
+    ) -> Generator[Dict[str, Any], None, None]:
         """Get voteAssetContracts from the database.
 
         Args:
@@ -2169,23 +2280,26 @@ class TronProvider(ClickhouseProvider):
         rows_stream = self.query_rows_stream(
             q,
             column_formats=TRON_VOTE_ASSET_CONTRACT_COLUMN_FORMATS,  # avoid auto convert string to bytes
+            query_formats=QUERY_FORMATS,
             parameters={**(parameters or {})},
         )
-
+        column_names = rows_stream.source.column_names  # type: ignore
         with rows_stream:
-            named_results = [
-                dict(zip(rows_stream.source.column_names, row)) for row in rows_stream
-            ]
-            return convert_bytes_to_hex_generator(ChainStyle.TRON, named_results)
+            for row in rows_stream:
+                yield use_tron_address(dict(zip(column_names, row)))
 
     def vote_witness_contracts(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "transactionHash": True, "contractIndex": True},
+        order_by: Optional[Dict[str, bool]] = {
+            "blockNumber": True,
+            "transactionHash": True,
+            "contractIndex": True,
+        },
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
-    ):
+    ) -> Generator[Dict[str, Any], None, None]:
         """Get voteWitnessContracts from the database.
 
         Args:
@@ -2224,23 +2338,26 @@ class TronProvider(ClickhouseProvider):
         rows_stream = self.query_rows_stream(
             q,
             column_formats=TRON_VOTE_WITNESS_CONTRACT_COLUMN_FORMATS,  # avoid auto convert string to bytes
+            query_formats=QUERY_FORMATS,
             parameters={**(parameters or {})},
         )
-
+        column_names = rows_stream.source.column_names  # type: ignore
         with rows_stream:
-            named_results = [
-                dict(zip(rows_stream.source.column_names, row)) for row in rows_stream
-            ]
-            return convert_bytes_to_hex_generator(ChainStyle.TRON, named_results)
+            for row in rows_stream:
+                yield use_tron_address(dict(zip(column_names, row)))
 
     def withdraw_balance_contracts(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "transactionHash": True, "contractIndex": True},
+        order_by: Optional[Dict[str, bool]] = {
+            "blockNumber": True,
+            "transactionHash": True,
+            "contractIndex": True,
+        },
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
-    ):
+    ) -> Generator[Dict[str, Any], None, None]:
         """Get withdrawBalanceContracts from the database.
 
         Args:
@@ -2279,23 +2396,26 @@ class TronProvider(ClickhouseProvider):
         rows_stream = self.query_rows_stream(
             q,
             column_formats=TRON_WITHDRAW_BALANCE_CONTRACT_COLUMN_FORMATS,  # avoid auto convert string to bytes
+            query_formats=QUERY_FORMATS,
             parameters={**(parameters or {})},
         )
-
+        column_names = rows_stream.source.column_names  # type: ignore
         with rows_stream:
-            named_results = [
-                dict(zip(rows_stream.source.column_names, row)) for row in rows_stream
-            ]
-            return convert_bytes_to_hex_generator(ChainStyle.TRON, named_results)
+            for row in rows_stream:
+                yield use_tron_address(dict(zip(column_names, row)))
 
     def withdraw_expire_unfreeze_contracts(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "transactionHash": True, "contractIndex": True},
+        order_by: Optional[Dict[str, bool]] = {
+            "blockNumber": True,
+            "transactionHash": True,
+            "contractIndex": True,
+        },
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
-    ):
+    ) -> Generator[Dict[str, Any], None, None]:
         """Get withdrawExpireUnfreezeContracts from the database.
 
         Args:
@@ -2334,23 +2454,26 @@ class TronProvider(ClickhouseProvider):
         rows_stream = self.query_rows_stream(
             q,
             column_formats=TRON_WITHDRAW_EXPIRE_UNFREEZE_CONTRACT_COLUMN_FORMATS,  # avoid auto convert string to bytes
+            query_formats=QUERY_FORMATS,
             parameters={**(parameters or {})},
         )
-
+        column_names = rows_stream.source.column_names  # type: ignore
         with rows_stream:
-            named_results = [
-                dict(zip(rows_stream.source.column_names, row)) for row in rows_stream
-            ]
-            return convert_bytes_to_hex_generator(ChainStyle.TRON, named_results)
+            for row in rows_stream:
+                yield use_tron_address(dict(zip(column_names, row)))
 
     def witness_create_contracts(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "transactionHash": True, "contractIndex": True},
+        order_by: Optional[Dict[str, bool]] = {
+            "blockNumber": True,
+            "transactionHash": True,
+            "contractIndex": True,
+        },
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
-    ):
+    ) -> Generator[Dict[str, Any], None, None]:
         """Get witnessCreateContracts from the database.
 
         Args:
@@ -2389,23 +2512,26 @@ class TronProvider(ClickhouseProvider):
         rows_stream = self.query_rows_stream(
             q,
             column_formats=TRON_WITNESS_CREATE_CONTRACT_COLUMN_FORMATS,  # avoid auto convert string to bytes
+            query_formats=QUERY_FORMATS,
             parameters={**(parameters or {})},
         )
-
+        column_names = rows_stream.source.column_names  # type: ignore
         with rows_stream:
-            named_results = [
-                dict(zip(rows_stream.source.column_names, row)) for row in rows_stream
-            ]
-            return convert_bytes_to_hex_generator(ChainStyle.TRON, named_results)
+            for row in rows_stream:
+                yield use_tron_address(dict(zip(column_names, row)))
 
     def witness_update_contracts(
         self,
         where: Optional[str],
-        order_by: Optional[Dict[str, bool]] = {"blockNum": True, "transactionHash": True, "contractIndex": True},
+        order_by: Optional[Dict[str, bool]] = {
+            "blockNumber": True,
+            "transactionHash": True,
+            "contractIndex": True,
+        },
         limit: Optional[int] = 100,
         offset: Optional[int] = 0,
         parameters: Optional[Dict[str, Any]] = None,
-    ):
+    ) -> Generator[Dict[str, Any], None, None]:
         """Get witnessUpdateContracts from the database.
 
         Args:
@@ -2444,11 +2570,10 @@ class TronProvider(ClickhouseProvider):
         rows_stream = self.query_rows_stream(
             q,
             column_formats=TRON_WITNESS_UPDATE_CONTRACT_COLUMN_FORMATS,  # avoid auto convert string to bytes
+            query_formats=QUERY_FORMATS,
             parameters={**(parameters or {})},
         )
-
+        column_names = rows_stream.source.column_names  # type: ignore
         with rows_stream:
-            named_results = [
-                dict(zip(rows_stream.source.column_names, row)) for row in rows_stream
-            ]
-            return convert_bytes_to_hex_generator(ChainStyle.TRON, named_results)
+            for row in rows_stream:
+                yield use_tron_address(dict(zip(column_names, row)))

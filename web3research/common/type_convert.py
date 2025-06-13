@@ -1,110 +1,87 @@
 import base58
 from binascii import unhexlify
-from typing import Generator, Optional
-from web3research.common.types import ChainStyle
+from typing import Any, Dict, Generator, Optional
 
 
-def convert_bytes_to_hex(style: ChainStyle, raw: bytes) -> str:
-    """Convert bytes to hex string based on the chain style.
-    
-    Args:
-        style (ChainStyle): The chain style.
-        raw (bytes): The raw bytes.
-    Returns:
-        str: The hex string.
-    """
-    if style == ChainStyle.ETH:
-        return "0x" + raw.hex()
-    elif style == ChainStyle.TRON:
-        if len(raw) == 20:
-            return base58.b58encode_check(unhexlify("41" + raw.hex())).decode()
-        return raw.hex()
-
-
-def convert_bytes_to_hex_generator(
-    style: ChainStyle, generator: Optional[Generator[dict, None, None]]
-) -> Optional[Generator[dict, None, None]]:
-    """Convert bytes to hex in a generator based on the chain style.
+def eth_to_tron_address(eth_address: str) -> str:
+    """Convert Ethereum address to TRON address.
 
     Args:
-        style (ChainStyle): The chain style.
-        generator (Generator[dict, None, None]): The generator.
+        eth_address (str): The Ethereum address.
     Returns:
-        Optional[Generator[dict, None, None]]: The generator.
+        str: The TRON address.
     """
-    if generator is None:
-        return generator
+    if not eth_address.startswith("0x") and len(eth_address) != 40:
+        raise ValueError(
+            "Not a valid Ethereum address: {eth_address}".format(
+                eth_address=eth_address
+            )
+        )
 
-    for item in generator:
-        for key, value in item.items():
-            if isinstance(value, bytes):
-                item[key] = convert_bytes_to_hex(style=style, raw=value)
-            elif isinstance(value, dict):
-                for k, v in value.items():
-                    if isinstance(v, bytes):
-                        value[k] = convert_bytes_to_hex(style=style, raw=v)
-                item[key] = value
-            elif isinstance(value, list):
-                for i, v in enumerate(value):
-                    if isinstance(v, bytes):
-                        value[i] = convert_bytes_to_hex(style=style, raw=v)
-                item[key] = value
-            elif isinstance(value, tuple):
-                value = list(value)
-                for i, v in enumerate(value):
-                    if isinstance(v, bytes):
-                        value[i] = convert_bytes_to_hex(style=style, raw=v)
-                item[key] = tuple(value)
-            elif isinstance(value, set):
-                value = list(value)
-                for i, v in enumerate(value):
-                    if isinstance(v, bytes):
-                        value[i] = convert_bytes_to_hex(style=style, raw=v)
-                item[key] = set(value)
-            elif isinstance(value, frozenset):
-                value = list(value)
-                for i, v in enumerate(value):
-                    if isinstance(v, bytes):
-                        value[i] = convert_bytes_to_hex(style=style, raw=v)
-                item[key] = frozenset(value)
+    # Remove the '0x' prefix and convert to bytes
+    eth_address_bytes = unhexlify(eth_address.removeprefix("0x").lower())
 
-        yield item
+    # Convert to base58check encoding
+    tron_address = base58.b58encode_check(b"\x41" + eth_address_bytes).decode("utf-8")
+
+    return tron_address
 
 
-def group_events_generator(generator: Optional[Generator[dict, None, None]]):
-    """Group events in a generator.
+def group_event_topics(event: dict):
+    """Group event topics into a list and restructure the event dictionary.
 
     Args:
-        generator (Optional[Generator[dict, None, None]]): The generator.
+        event (dict): The event dictionary.
     Returns:
-        Optional[Generator[dict, None, None]]: The generator.
+        dict: The modified event dictionary.
     """
-    if generator is None:
-        return generator
+    event["topics"] = []
+    # restruct the topics
+    if event["topic0"] is not None:
+        event["topics"].append(event["topic0"])
+    if event["topic1"] is not None:
+        event["topics"].append(event["topic1"])
+    if event["topic2"] is not None:
+        event["topics"].append(event["topic2"])
+    if event["topic3"] is not None:
+        event["topics"].append(event["topic3"])
 
-    for event in generator:
-        event["topics"] = []
-        # restruct the topics
-        if event["topic0"] is not None:
-            event["topics"].append(event["topic0"])
-        if event["topic1"] is not None:
-            event["topics"].append(event["topic1"])
-        if event["topic2"] is not None:
-            event["topics"].append(event["topic2"])
-        if event["topic3"] is not None:
-            event["topics"].append(event["topic3"])
+    del event["topic0"], event["topic1"], event["topic2"], event["topic3"]
 
-        del event["topic0"], event["topic1"], event["topic2"], event["topic3"]
+    # compatible to TRON
+    if "transactionIndex" not in event:
+        event["transactionIndex"] = 0
+    if "blockHash" not in event:
+        event["blockHash"] = None
+    if "blockNumber" not in event:
+        event["blockNumber"] = 0
 
-        # compatible to TRON
-        if "transactionIndex" not in event:
-            event["transactionIndex"] = 0
-        if "blockHash" not in event:
-            event["blockHash"] = None
-        if "blockNumber" not in event:
-            if "blockNum" in event:
-                event["blockNumber"] = event["blockNum"]
-            else:
-                event["blockNumber"] = 0
+    return event
 
-        yield event
+
+def use_tron_address(item: Dict[str, Any]) -> Dict[str, Any]:
+    """Convert hex address to TRON address in a dictionary.
+
+    Args:
+        item (Dict[str, Any]): The dictionary containing addresses.
+    Returns:
+        Dict[str, Any]: The dictionary with TRON addresses.
+    """
+    for key, value in item.items():
+        if isinstance(value, str) and len(value) == 40:
+            # Convert Ethereum address to TRON address
+            item[key] = eth_to_tron_address(value)
+        elif isinstance(value, list):
+            # Convert each Ethereum address in the list to TRON address
+            item[key] = [
+                eth_to_tron_address(addr)
+                for addr in value
+                if isinstance(addr, str) and len(addr) == 40
+            ]
+        elif isinstance(value, dict):
+            use_tron_address(value)  # Recursively convert nested dictionaries
+        else:
+            # If the value is not an address, leave it unchanged
+            continue
+
+    return item
