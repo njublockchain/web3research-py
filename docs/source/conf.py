@@ -12,7 +12,9 @@ sys.path.insert(0, os.path.abspath("../.."))
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = 'web3research-docs'
-copyright = '2024, Web3Research'
+version = "0.0.10"
+release = "0.0.10"
+copyright = '2025, Web3Research'
 author = 'Command'
 
 # -- General configuration ---------------------------------------------------

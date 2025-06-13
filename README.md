@@ -59,3 +59,21 @@ print(result)
 More practical examples are shown on [web3research-py-examples](http://github.com/njublockchain/web3research-py-examples)
 
 You can read detailed guide on [our document site](https://doc.web3resear.ch/). Auto-generated python API document is available  on https://web3research.readthedocs.io/.
+
+## Development
+
+### Release Process
+
+This project uses `uv` for automated releases. Set up your PyPI tokens via environment variables or `.env` file:
+
+```bash
+# Using .env file (recommended)
+echo 'PYPI_TOKEN=pypi-your-token-here' >> .env
+python scripts/release.py patch  # or minor/major
+
+# Using environment variables
+export PYPI_TOKEN=pypi-your-token-here
+python scripts/release.py patch
+```
+
+For TestPyPI: use `TEST_PYPI_TOKEN` and add `--test-pypi` flag.
