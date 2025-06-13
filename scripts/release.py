@@ -286,7 +286,7 @@ class ReleaseManager:
         
         # Upload using uv publish
         upload_cmd = ["uv", "publish"]
-        upload_cmd.extend(["--repository-url", repo_url])
+        upload_cmd.extend(["--publish-url", repo_url])
         upload_cmd.extend(["--username", "__token__"])
         upload_cmd.extend(["--password", token])
         
