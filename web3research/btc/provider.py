@@ -278,7 +278,6 @@ class BitcoinProvider(ClickhouseProvider):
             weight,
             version,
             lockTime,
-            blockHash,
             blockHeight,
             blockTime
         FROM {database}.inputs 
@@ -308,7 +307,6 @@ class BitcoinProvider(ClickhouseProvider):
                 "weight",
                 "version",
                 "lockTime",
-                "blockHash",
                 "blockHeight",
                 "blockTime",
             ]

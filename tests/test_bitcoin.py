@@ -66,7 +66,7 @@ class TestBitcoin:
         # Verify transaction structure
         if transactions:
             tx = transactions[0]
-            expected_fields = ["txid", "blockHeight", "blockHash"]
+            expected_fields = ["txid", "blockHeight"]
             for field in expected_fields:
                 assert field in tx, f"Transaction should contain {field} field"
 
